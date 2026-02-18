@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow - Fleet Owner Dashboard</title>
+    <link rel="stylesheet" href="animated-bg.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: transparent; min-height: 100vh; overflow-y: auto; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 100; }
+        .header h1 { font-size: 1.8rem; }
+        .logout-btn { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 0.5rem 1.5rem; border-radius: 6px; cursor: pointer; }
+        .logout-btn:hover { background: rgba(255,255,255,0.3); }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; position: relative; z-index: 1; }
+        .welcome { background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #ddd; }
+        .tab { padding: 1rem 2rem; border: none; background: none; cursor: pointer; font-weight: bold; color: #666; border-bottom: 3px solid transparent; transition: 0.3s; }
+        .tab.active { color: #667eea; border-bottom-color: #667eea; }
+        .tab-content { display: none; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .tab-content.active { display: block; }
+        .truck-card { border: 1px solid #ddd; padding: 1.5rem; margin-bottom: 1rem; border-radius: 8px; background: #fafafa; }
+        .truck-card h3 { margin-bottom: 0.5rem; color: #333; }
+        .truck-card p { margin: 0.3rem 0; color: #666; }
+        .btn { padding: 0.6rem 1.5rem; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s; margin-right: 0.5rem; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5568d3; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; }
+        .empty-state { text-align: center; padding: 3rem; color: #999; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal.active { display: flex; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+        .back-btn-corner { position: fixed; top: auto; bottom: 2rem; left: 2rem; z-index: 1000; }
+        .back-btn-corner button { background: rgba(255, 255, 255, 0.9); color: #667eea; border: 1px solid rgba(102, 126, 234, 0.3); padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: all 0.3s; }
+        .back-btn-corner button:hover { background: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); transform: translateX(-3px); }
+        .dashboard-dropdown { position: relative; display: inline-block; margin-top: 0.5rem; z-index: 10000; }
+        .dashboard-btn { display: inline-block; padding: 0.5rem 1.2rem; background: rgba(255, 255, 255, 0.2); color: white; text-decoration: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.3); cursor: pointer; transition: all 0.3s; }
+        .dashboard-btn:hover { background: rgba(255, 255, 255, 0.3); }
+        .dropdown-content { display: none; position: absolute; top: calc(100% + 0.5rem); left: 0; background: white; min-width: 220px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); border-radius: 6px; z-index: 10001; }
+        .dropdown-content.show { display: block; }
+        .dropdown-content a { color: #333; padding: 0.8rem 1rem; text-decoration: none; display: block; transition: 0.3s; border-bottom: 1px solid #f0f0f0; }
+        .dropdown-content a:first-child { border-radius: 6px 6px 0 0; }
+        .dropdown-content a:last-child { border-bottom: none; border-radius: 0 0 6px 6px; }
+        .dropdown-content a:hover { background: #f5f5f5; color: #667eea; }
+    </style>
+</head>
+<body>
+    <div class="animated-gradient-bg"></div>
+    
+    <div class="back-btn-corner">
+        <button onclick="goBack()">← Back</button>
+    </div>
+    
+    <div class="header">
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <h1>🚛 FleetFlow - Fleet Owner Dashboard</h1>
+            <div class="dashboard-dropdown">
+                <div class="dashboard-btn" onclick="toggleDropdown(event)">
+                    📋 Options ▼
+                </div>
+                <div class="dropdown-content" id="dropdownMenu">
+                    <a href="welcome.html">🏠 Home</a>
+                    <a href="#" onclick="switchTab('trucks'); return false;">🚛 My Trucks</a>
+                    <a href="#" onclick="switchTab('drivers'); return false;">👥 Drivers</a>
+                    <a href="#" onclick="switchTab('jobs'); return false;">💼 Jobs</a>
+                    <a href="#" onclick="switchTab('analytics'); return false;">📊 Analytics</a>
+                </div>
+            </div>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="container">
+        <div class="welcome">
+            <h2>Welcome, <span id="userName">Fleet Owner</span>!</h2>
+            <p>Manage your fleet, assign drivers, and track performance.</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('trucks')">My Trucks</button>
+            <button class="tab" onclick="switchTab('drivers')">Drivers</button>
+            <button class="tab" onclick="switchTab('jobs')">Jobs</button>
+            <button class="tab" onclick="switchTab('analytics')">Analytics</button>
+        </div>
+
+        <div id="trucks" class="tab-content active">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2>My Trucks</h2>
+                <button class="btn btn-primary" onclick="openAddTruckModal()">+ Add Truck</button>
+            </div>
+            <div id="trucksList"></div>
+        </div>
+
+        <div id="drivers" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2>Available Drivers</h2>
+                <button class="btn btn-primary" onclick="openAddDriverModal()">+ Add Driver</button>
+            </div>
+            <div id="driversList"></div>
+        </div>
+
+        <div id="jobs" class="tab-content">
+            <h2>Available Jobs</h2>
+            <div id="jobsList"></div>
+        </div>
+
+        <div id="analytics" class="tab-content">
+            <h2>Fleet Analytics</h2>
+            <div id="analyticsContent"></div>
+        </div>
+    </div>
+
+    <!-- Add Truck Modal -->
+    <div id="addTruckModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Truck</h2>
+                <button class="close-btn" onclick="closeAddTruckModal()" style="background: #e74c3c; color: white; border: none; font-size: 1.5rem; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0;">&times;</button>
+            </div>
+            <form onsubmit="return addTruck(event)">
+                <div class="form-group">
+                    <label>Registration Number</label>
+                    <input type="text" id="regNumber" required />
+                </div>
+                <div class="form-group">
+                    <label>Truck Type</label>
+                    <input type="text" id="truckType" placeholder="e.g., Flatbed, Box Truck" required />
+                </div>
+                <div class="form-group">
+                    <label>Capacity (tons)</label>
+                    <input type="number" id="capacity" step="0.1" required />
+                </div>
+                <button type="submit" class="btn btn-success">Add Truck</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assign Driver Modal -->
+    <div id="assignDriverModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Assign Driver to <span id="truckName"></span></h2>
+                <button class="close-btn" onclick="closeAssignDriverModal()" style="background: #e74c3c; color: white; border: none; font-size: 1.5rem; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0;">&times;</button>
+            </div>
+            <div id="availableDriversList"></div>
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #ddd; text-align: center;">
+                <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem;">Don't see the driver you need?</p>
+                <button class="btn btn-primary" onclick="openAddDriverFromAssign()" style="width: 100%;">+ Add New Driver</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Driver Modal -->
+    <div id="addDriverModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Driver</h2>
+                <button class="close-btn" onclick="closeAddDriverModal()" style="background: #e74c3c; color: white; border: none; font-size: 1.5rem; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0;">&times;</button>
+            </div>
+            <form onsubmit="addDriver(event)">
+                <div class="form-group">
+                    <label>Driver Name</label>
+                    <input type="text" id="driverName" required />
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="driverEmail" required />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="driverPassword" required minlength="6" />
+                </div>
+                <div class="form-group">
+                    <label>License Number</label>
+                    <input type="text" id="licenseNumber" required />
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="phoneNumber" placeholder="+1234567890" />
+                </div>
+                <div class="form-group">
+                    <label>Experience (years)</label>
+                    <input type="number" id="experience" min="0" step="1" />
+                </div>
+                <button type="submit" class="btn btn-success">Add Driver</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Driver Details Modal -->
+    <div id="viewDriverModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Driver Details</h2>
+                <button class="close-btn" onclick="closeViewDriverModal()" style="background: #e74c3c; color: white; border: none; font-size: 1.5rem; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0;">&times;</button>
+            </div>
+            <div id="driverDetailsContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:3001/api';
+        let token = localStorage.getItem('token');
+        let isAddingDriverFromAssign = false;
+
+        if (!token) {
+            window.location.href = 'auth.html';
+        }
+
+        // Ensure button works when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const addTruckBtn = document.querySelector('button[onclick="openAddTruckModal()"]');
+            if (addTruckBtn) {
+                addTruckBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openAddTruckModal();
+                });
+            }
+        });
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+
+            if (tabName === 'trucks') loadTrucks();
+            if (tabName === 'drivers') loadDrivers();
+            if (tabName === 'jobs') loadJobs();
+            if (tabName === 'analytics') loadAnalytics();
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'auth.html';
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.dashboard-btn')) {
+                const dropdowns = document.getElementsByClassName('dropdown-content');
+                for (let i = 0; i < dropdowns.length; i++) {
+                    dropdowns[i].classList.remove('show');
+                }
+            }
+        }
+
+        async function loadUserInfo() {
+            try {
+                const res = await fetch(`${API_URL}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const user = await res.json();
+                document.getElementById('userName').textContent = user.name || user.email;
+            } catch (err) {
+                console.error('Failed to load user info:', err);
+            }
+        }
+
+        async function loadTrucks() {
+            try {
+                const res = await fetch(`${API_URL}/trucks`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const trucks = await res.json();
+                const container = document.getElementById('trucksList');
+                
+                if (trucks.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No trucks added yet. Click "Add Truck" to get started.</div>';
+                    return;
+                }
+
+                container.innerHTML = trucks.map(truck => `
+                    <div class="truck-card">
+                        <h3>${truck.registration_number}</h3>
+                        <p><strong>Type:</strong> ${truck.type || 'N/A'}</p>
+                        <p><strong>Capacity:</strong> ${truck.capacity_tons} tons</p>
+                        <p><strong>Status:</strong> <span style="color: ${truck.status === 'available' ? 'green' : truck.status === 'on_trip' ? 'orange' : 'red'}">${truck.status}</span></p>
+                        <p><strong>Driver:</strong> ${truck.assigned_driver_id || 'Not assigned'}</p>
+                        <div style="margin-top: 1rem;">
+                            <button class="btn btn-primary" onclick="openAssignDriverModal('${truck.id}', '${truck.registration_number}')">Assign Driver</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load trucks:', err);
+                document.getElementById('trucksList').innerHTML = '<div class="empty-state">Failed to load data.</div>';
+            }
+        }
+
+        function openAddTruckModal() {
+            console.log('Opening add truck modal...');
+            const modal = document.getElementById('addTruckModal');
+            if (!modal) {
+                console.error('Modal element not found!');
+                alert('Error: Modal not found. Please refresh the page.');
+                return;
+            }
+            modal.classList.add('active');
+            console.log('Modal classes:', modal.className);
+            
+            // Clear form fields
+            document.getElementById('regNumber').value = '';
+            document.getElementById('truckType').value = '';
+            document.getElementById('capacity').value = '';
+        }
+
+        function closeAddTruckModal() {
+            document.getElementById('addTruckModal').classList.remove('active');
+        }
+
+        let currentTruckId = null;
+
+        function openAssignDriverModal(truckId, truckName) {
+            currentTruckId = truckId;
+            document.getElementById('truckName').textContent = truckName;
+            document.getElementById('assignDriverModal').classList.add('active');
+            loadAvailableDrivers();
+        }
+
+        function closeAssignDriverModal() {
+            document.getElementById('assignDriverModal').classList.remove('active');
+            currentTruckId = null;
+        }
+
+        async function loadAvailableDrivers() {
+            try {
+                const res = await fetch(`${API_URL}/admin/users?role=driver`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const users = await res.json();
+                const drivers = users.filter(u => u.role === 'driver');
+                
+                const container = document.getElementById('availableDriversList');
+                
+                if (drivers.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem;">No drivers available</p>';
+                    return;
+                }
+
+                container.innerHTML = drivers.map(driver => `
+                    <div class="truck-card" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3>${driver.name || driver.email}</h3>
+                            <p>${driver.email}</p>
+                        </div>
+                        <button class="btn btn-success" onclick="assignDriverToTruck('${driver.id}', '${driver.name || driver.email}')">Assign</button>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load drivers:', err);
+            }
+        }
+
+        async function assignDriverToTruck(driverId, driverName) {
+            if (!currentTruckId) return;
+
+            try {
+                const res = await fetch(`${API_URL}/trucks/${currentTruckId}/assign-driver`, {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ driver_id: driverId })
+                });
+                
+                if (res.ok) {
+                    alert(`Driver ${driverName} assigned successfully!`);
+                    closeAssignDriverModal();
+                    loadTrucks();
+                } else {
+                    const error = await res.json();
+                    alert('Failed to assign driver: ' + (error.error || 'Unknown error'));
+                }
+            } catch (err) {
+                console.error('Failed to assign driver:', err);
+                alert('Error assigning driver');
+            }
+        }
+
+        async function loadDrivers() {
+            try {
+                const res = await fetch(`${API_URL}/admin/users?role=driver`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const users = await res.json();
+                const drivers = users.filter(u => u.role === 'driver');
+                const container = document.getElementById('driversList');
+                
+                if (drivers.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No drivers registered yet. Click "Add Driver" to get started.</div>';
+                    return;
+                }
+
+                container.innerHTML = drivers.map(driver => `
+                    <div class="truck-card">
+                        <h3>${driver.name || driver.email}</h3>
+                        <p><strong>Email:</strong> ${driver.email}</p>
+                        <p><strong>License:</strong> ${driver.license_number || 'N/A'}</p>
+                        <p><strong>Phone:</strong> ${driver.phone || 'N/A'}</p>
+                        <p><strong>Status:</strong> <span style="color: ${driver.is_verified ? 'green' : 'orange'}">${driver.is_verified ? 'Verified' : 'Pending'}</span></p>
+                        <div style="margin-top: 1rem;">
+                            <button class="btn btn-primary" onclick="viewDriverDetails('${driver.id}')">View Details</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load drivers:', err);
+                document.getElementById('driversList').innerHTML = '<div class="empty-state">Failed to load data.</div>';
+            }
+        }
+
+        function openAddDriverModal() {
+            document.getElementById('addDriverModal').classList.add('active');
+        }
+
+        function openAddDriverFromAssign() {
+            isAddingDriverFromAssign = true;
+            document.getElementById('assignDriverModal').classList.remove('active');
+            document.getElementById('addDriverModal').classList.add('active');
+        }
+
+        function closeAddDriverModal() {
+            document.getElementById('addDriverModal').classList.remove('active');
+            if (isAddingDriverFromAssign) {
+                isAddingDriverFromAssign = false;
+                document.getElementById('assignDriverModal').classList.add('active');
+                loadAvailableDrivers();
+            }
+        }
+
+        async function addDriver(event) {
+            event.preventDefault();
+            
+            const driverData = {
+                name: document.getElementById('driverName').value,
+                email: document.getElementById('driverEmail').value,
+                password: document.getElementById('driverPassword').value,
+                role: 'driver',
+                license_number: document.getElementById('licenseNumber').value,
+                phone: document.getElementById('phoneNumber').value || null,
+                experience_years: parseInt(document.getElementById('experience').value) || 0
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(driverData)
+                });
+                
+                if (res.ok) {
+                    alert('Driver added successfully!');
+                    closeAddDriverModal();
+                    loadDrivers();
+                    if (!isAddingDriverFromAssign) {
+                        event.target.reset();
+                    }
+                } else {
+                    const error = await res.json();
+                    if (error.error === 'Forbidden') {
+                        alert('Only administrators can add new drivers. Please contact your admin or log in with an admin account.');
+                    } else {
+                        alert('Failed to add driver: ' + (error.error || 'Unknown error'));
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to add driver:', err);
+                alert('Error adding driver. Only administrators can add new users.');
+            }
+        }
+
+        async function viewDriverDetails(driverId) {
+            try {
+                const res = await fetch(`${API_URL}/admin/users`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const users = await res.json();
+                const driver = users.find(u => u.id === driverId);
+                
+                if (!driver) {
+                    alert('Driver not found');
+                    return;
+                }
+
+                const detailsHTML = `
+                    <div class="truck-card" style="background: white; border: none;">
+                        <h3 style="margin-bottom: 1rem; color: #667eea;">👤 ${driver.name || 'N/A'}</h3>
+                        <p><strong>Email:</strong> ${driver.email}</p>
+                        <p><strong>License Number:</strong> ${driver.license_number || 'N/A'}</p>
+                        <p><strong>Phone:</strong> ${driver.phone || 'N/A'}</p>
+                        <p><strong>Experience:</strong> ${driver.experience_years || 0} years</p>
+                        <p><strong>Status:</strong> <span style="color: ${driver.is_verified ? 'green' : 'orange'}">${driver.is_verified ? '✓ Verified' : '⏳ Pending Verification'}</span></p>
+                        <p><strong>Account Created:</strong> ${new Date(driver.created_at).toLocaleDateString()}</p>
+                        ${driver.company_name ? `<p><strong>Company:</strong> ${driver.company_name}</p>` : ''}
+                    </div>
+                `;
+                
+                document.getElementById('driverDetailsContent').innerHTML = detailsHTML;
+                document.getElementById('viewDriverModal').classList.add('active');
+            } catch (err) {
+                console.error('Failed to load driver details:', err);
+                alert('Error loading driver details');
+            }
+        }
+
+        function closeViewDriverModal() {
+            document.getElementById('viewDriverModal').classList.remove('active');
+        }
+
+        async function loadJobs() {
+            try {
+                const res = await fetch(`${API_URL}/loads?status=open`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const jobs = await res.json();
+                const container = document.getElementById('jobsList');
+                
+                if (jobs.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No available jobs at the moment.</div>';
+                    return;
+                }
+
+                container.innerHTML = jobs.map(job => `
+                    <div class="truck-card">
+                        <h3>${job.title}</h3>
+                        <p><strong>From:</strong> ${job.pickup_location}</p>
+                        <p><strong>To:</strong> ${job.delivery_location}</p>
+                        <p><strong>Weight:</strong> ${job.weight_tons} tons</p>
+                        <p><strong>Price:</strong> $${job.price_fixed || 'Negotiable'}</p>
+                        <div style="margin-top: 1rem;">
+                            <button class="btn btn-primary" onclick="viewJobDetails('${job.id}')">View Details</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load jobs:', err);
+                document.getElementById('jobsList').innerHTML = '<div class="empty-state">Failed to load data.</div>';
+            }
+        }
+
+        function viewJobDetails(jobId) {
+            alert('Job details for: ' + jobId + '\n\nThis feature will show full job details and allow you to assign trucks/drivers to this job.');
+        }
+
+        async function addTruck(event) {
+            if (event) event.preventDefault();
+            
+            console.log('addTruck called');
+            
+            const regNumber = document.getElementById('regNumber').value.trim();
+            const truckType = document.getElementById('truckType').value.trim();
+            const capacity = document.getElementById('capacity').value;
+            
+            if (!regNumber || !truckType || !capacity) {
+                alert('Please fill all required fields');
+                return false;
+            }
+            
+            const truckData = {
+                registration_number: regNumber,
+                type: truckType,
+                capacity_tons: parseFloat(capacity),
+                status: 'available'
+            };
+
+            console.log('Sending truck data:', truckData);
+            console.log('API URL:', `${API_URL}/trucks`);
+
+            try {
+                const res = await fetch(`${API_URL}/trucks`, {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(truckData)
+                });
+                
+                console.log('Response status:', res.status);
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    console.log('Truck added:', data);
+                    alert('✅ Truck added successfully!');
+                    
+                    // Clear form
+                    document.getElementById('regNumber').value = '';
+                    document.getElementById('truckType').value = '';
+                    document.getElementById('capacity').value = '';
+                    
+                    closeAddTruckModal();
+                    loadTrucks();
+                } else {
+                    const error = await res.json().catch(() => ({ error: 'Unknown error' }));
+                    console.error('Error response:', error);
+                    alert('❌ Failed to add truck: ' + (error.error || 'Unknown error'));
+                }
+            } catch (err) {
+                console.error('Failed to add truck:', err);
+                alert('❌ Error adding truck: ' + err.message);
+            }
+            
+            return false;
+        }
+
+        async function loadAnalytics() {
+            try {
+                const trucksRes = await fetch(`${API_URL}/trucks`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const trucks = await trucksRes.json();
+                
+                const available = trucks.filter(t => t.status === 'available').length;
+                const onTrip = trucks.filter(t => t.status === 'on_trip').length;
+                const maintenance = trucks.filter(t => t.status === 'maintenance').length;
+
+                document.getElementById('analyticsContent').innerHTML = `
+                    <div class="truck-card">
+                        <h3>Fleet Overview</h3>
+                        <p><strong>Total Trucks:</strong> ${trucks.length}</p>
+                        <p><strong>Available:</strong> ${available}</p>
+                        <p><strong>On Trip:</strong> ${onTrip}</p>
+                        <p><strong>In Maintenance:</strong> ${maintenance}</p>
+                    </div>
+                `;
+            } catch (err) {
+                console.error('Failed to load analytics:', err);
+                document.getElementById('analyticsContent').innerHTML = '<div class="empty-state">Failed to load data.</div>';
+            }
+        }
+
+        // Initialize
+        loadUserInfo();
+        loadTrucks();
+    </script>
+</body>
+</html>

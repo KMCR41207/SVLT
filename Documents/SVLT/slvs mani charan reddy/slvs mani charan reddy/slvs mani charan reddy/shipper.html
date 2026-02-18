@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow - Shipper Dashboard</title>
+    <link rel="stylesheet" href="animated-bg.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: transparent; color: #333; min-height: 100vh; overflow-y: auto; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative; z-index: 100; }
+        nav { display: flex; gap: 2rem; align-items: center; }
+        nav h1 { font-size: 1.8rem; margin-right: auto; }
+        nav a { color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; transition: 0.3s; }
+        nav a:hover { background: rgba(255,255,255,0.2); }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 1rem; position: relative; z-index: 1; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        button { padding: 0.6rem 1.2rem; border: none; border-radius: 4px; cursor: pointer; background: #667eea; color: white; font-weight: bold; }
+        button:hover { background: #5568d3; }
+        input, textarea { width: 100%; padding: 0.7rem; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 1rem; }
+        .badge { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: bold; }
+        .badge.open { background: #d5f4e6; color: #27ae60; }
+        .badge.assigned { background: #ffeaa7; color: #d63031; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; margin-top: 1rem; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #ecf0f1; }
+        thead { background: #667eea; color: white; }
+        .back-btn-corner { position: fixed; top: auto; bottom: 2rem; left: 2rem; z-index: 1000; }
+        .back-btn-corner button { background: rgba(255, 255, 255, 0.9); color: #667eea; border: 1px solid rgba(102, 126, 234, 0.3); padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: all 0.3s; }
+        .back-btn-corner button:hover { background: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); transform: translateX(-3px); }
+        .dashboard-dropdown { position: relative; display: inline-block; margin-top: 0.5rem; z-index: 10000; }
+        .dashboard-btn { display: inline-block; padding: 0.5rem 1.2rem; background: rgba(255, 255, 255, 0.2); color: white; text-decoration: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.3); cursor: pointer; transition: all 0.3s; }
+        .dashboard-btn:hover { background: rgba(255, 255, 255, 0.3); }
+        .dropdown-content { display: none; position: absolute; top: calc(100% + 0.5rem); left: 0; background: white; min-width: 220px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); border-radius: 6px; z-index: 10001; }
+        .dropdown-content.show { display: block; }
+        .dropdown-content a { color: #333; padding: 0.8rem 1rem; text-decoration: none; display: block; transition: 0.3s; border-bottom: 1px solid #f0f0f0; }
+        .dropdown-content a:first-child { border-radius: 6px 6px 0 0; }
+        .dropdown-content a:last-child { border-bottom: none; border-radius: 0 0 6px 6px; }
+        .dropdown-content a:hover { background: #f5f5f5; color: #667eea; }
+    </style>
+</head>
+<body>
+    <div class="animated-gradient-bg"></div>
+    
+    <div class="back-btn-corner">
+        <button onclick="goBack()">← Back</button>
+    </div>
+    
+    <header>
+        <nav>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <h1>📦 FleetFlow Shipper</h1>
+                <div class="dashboard-dropdown">
+                    <div class="dashboard-btn" onclick="toggleDropdown(event)">
+                        📋 Options ▼
+                    </div>
+                    <div class="dropdown-content" id="dropdownMenu">
+                        <a href="welcome.html">🏠 Home</a>
+                        <a href="#" data-page="dashboard">📊 Dashboard</a>
+                        <a href="#" data-page="post-load">➕ Post Load</a>
+                        <a href="#" data-page="my-loads">📦 My Loads</a>
+                        <a href="#" data-page="payments">💳 Payments</a>
+                    </div>
+                </div>
+            </div>
+            <a href="#" data-page="dashboard">Dashboard</a>
+            <a href="#" data-page="post-load">Post Load</a>
+            <a href="#" data-page="my-loads">My Loads</a>
+            <a href="#" data-page="payments">Payments</a>
+            <button onclick="logout()" style="margin-left: auto; background: #e74c3c;">Logout</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div id="dashboard" class="page active">
+            <h2>📊 Dashboard</h2>
+            <div class="grid">
+                <div class="card">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2.5rem; color: #667eea; font-weight: bold;" id="totalLoadsCount">0</div>
+                        <div style="color: #666; margin-top: 0.5rem;">Total Loads Posted</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2.5rem; color: #27ae60; font-weight: bold;" id="openCount">0</div>
+                        <div style="color: #666; margin-top: 0.5rem;">Open Loads</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2.5rem; color: #e67e22; font-weight: bold;" id="pendingPayments">$0</div>
+                        <div style="color: #666; margin-top: 0.5rem;">Pending Payments</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="post-load" class="page">
+            <div class="card" style="max-width: 600px;">
+                <h2>📝 Post a New Load</h2>
+                <input type="text" id="loadTitle" placeholder="Load title (e.g., Construction Materials)"/>
+                <input type="text" id="goodsType" placeholder="Goods type"/>
+                <input type="number" id="weightTons" placeholder="Weight (tons)" step="0.1"/>
+                <input type="text" id="pickupLocation" placeholder="Pickup location"/>
+                <input type="text" id="deliveryLocation" placeholder="Delivery location"/>
+                <input type="number" id="priceFixed" placeholder="Fixed price (or leave empty for bidding)" step="0.01"/>
+                <textarea id="loadNotes" placeholder="Additional notes" style="resize: vertical; height: 100px;"></textarea>
+                <button onclick="postLoad()">Post Load</button>
+            </div>
+        </div>
+
+        <div id="my-loads" class="page">
+            <h2>🚚 My Loads</h2>
+            <div id="loadsContainer"></div>
+        </div>
+
+        <div id="payments" class="page">
+            <h2>💳 Payments & Invoices</h2>
+            <div id="paymentsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:3000/api';
+        let token = localStorage.getItem('token');
+
+        if (!token) window.location.href = 'landing.html';
+
+        document.querySelectorAll('[data-page]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = e.target.dataset.page;
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(page).classList.add('active');
+                if (page === 'dashboard') loadDashboard();
+                if (page === 'my-loads') loadMyLoads();
+                if (page === 'payments') loadPayments();
+            });
+        });
+
+        function postLoad() {
+            const payload = {
+                title: document.getElementById('loadTitle').value,
+                goods_type: document.getElementById('goodsType').value,
+                weight_tons: parseFloat(document.getElementById('weightTons').value),
+                pickup_location: document.getElementById('pickupLocation').value,
+                delivery_location: document.getElementById('deliveryLocation').value,
+                price_fixed: document.getElementById('priceFixed').value ? parseFloat(document.getElementById('priceFixed').value) : null
+            };
+
+            fetch(`${API_URL}/loads`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(() => {
+                alert('✅ Load posted successfully!');
+                document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+            });
+        }
+
+        function loadDashboard() {
+            fetch(`${API_URL}/admin/dashboard/stats`, { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('totalLoadsCount').textContent = data.total_loads || 0;
+                    document.getElementById('openCount').textContent = data.open_loads || 0;
+                    document.getElementById('pendingPayments').textContent = '$' + (data.pending_payments || 0).toFixed(2);
+                });
+        }
+
+        function loadMyLoads() {
+            fetch(`${API_URL}/loads`, { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(r => r.json())
+                .then(loads => {
+                    const html = '<table><thead><tr><th>Load</th><th>Weight</th><th>Route</th><th>Status</th><th>Bids</th></tr></thead><tbody>' +
+                        loads.map(l => '<tr><td>' + l.title + '</td><td>' + l.weight_tons + 'T</td><td>' + l.pickup_location + ' → ' + l.delivery_location + '</td><td><span class="badge ' + (l.status === 'open' ? 'open' : 'assigned') + '">' + l.status + '</span></td><td><button onclick="viewBids(\'' + l.id + '\')">View</button></td></tr>').join('') +
+                    '</tbody></table>';
+                    document.getElementById('loadsContainer').innerHTML = html;
+                });
+        }
+
+        function viewBids(loadId) {
+            fetch(`${API_URL}/loads/${loadId}/bids`, { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(r => r.json())
+                .then(bids => alert(`Bids received: ${bids.length}`));
+        }
+
+        function loadPayments() {
+            fetch(`${API_URL}/payments`, { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(r => r.json())
+                .then(payments => {
+                    const html = '<table><thead><tr><th>Invoice</th><th>Amount</th><th>Status</th></tr></thead><tbody>' +
+                        payments.map(p => '<tr><td>INV-' + p.id.substring(0, 8) + '</td><td>$' + p.amount + '</td><td>' + p.status + '</td></tr>').join('') +
+                    '</tbody></table>';
+                    document.getElementById('paymentsContainer').innerHTML = html;
+                });
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'landing.html';
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.dashboard-btn')) {
+                const dropdowns = document.getElementsByClassName('dropdown-content');
+                for (let i = 0; i < dropdowns.length; i++) {
+                    dropdowns[i].classList.remove('show');
+                }
+            }
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>

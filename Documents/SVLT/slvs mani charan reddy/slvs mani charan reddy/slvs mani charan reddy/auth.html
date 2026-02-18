@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow - Login & Register</title>
+    <link rel="stylesheet" href="animated-bg.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: transparent; min-height: 100vh; padding: 2rem 1rem; overflow-y: auto; overflow-x: hidden; }
+        .container { background: rgba(255, 255, 255, 0.95); border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 500px; width: 100%; padding: 3rem; backdrop-filter: blur(10px); position: relative; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 2rem; }
+        .header h1 { font-size: 2rem; color: #667eea; margin-bottom: 0.5rem; }
+        .header p { color: #666; font-size: 0.95rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333; }
+        input, select { width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; transition: border 0.3s; background: white; color: #333; }
+        input::placeholder { color: #999; opacity: 1; }
+        input:focus, select:focus { outline: none; border-color: #667eea; background: white; color: #333; }
+        button { width: 100%; padding: 0.8rem; border: none; border-radius: 6px; background: #667eea; color: white; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #5568d3; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .toggle { text-align: center; margin-top: 1.5rem; color: #666; }
+        .toggle a { color: #667eea; cursor: pointer; text-decoration: none; font-weight: 600; }
+        .toggle a:hover { text-decoration: underline; }
+        .tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #f0f0f0; }
+        .tab { flex: 1; padding: 0.8rem 1.5rem; border: none; border-bottom: 3px solid transparent; cursor: pointer; background: none; font-weight: bold; color: #666; transition: 0.3s; }
+        .tab.active { color: #667eea; border-bottom-color: #667eea; }
+        .tab:hover { color: #5568d3; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .demo-creds { background: #f8f9fa; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; font-size: 0.85rem; border-left: 3px solid #667eea; }
+        .demo-creds strong { color: #667eea; display: block; margin-bottom: 0.5rem; }
+        .back-link { position: fixed; bottom: 2rem; left: 2rem; margin: 0; z-index: 1000; }
+        .back-link a { color: #667eea; text-decoration: none; font-size: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; background: rgba(255, 255, 255, 0.9); padding: 0.6rem 1.2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: all 0.3s; }
+        .back-link a:hover { background: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); transform: translateX(-3px); }
+        .dashboard-link { display: inline-block; padding: 0.5rem 1.5rem; background: rgba(102, 126, 234, 0.1); color: #667eea; text-decoration: none; border-radius: 6px; font-weight: 600; border: 1px solid #667eea; transition: all 0.3s; }
+        .dashboard-link:hover { background: #667eea; color: white; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); }
+    </style>
+</head>
+<body>
+    <div class="animated-gradient-bg"></div>
+    
+    <div class="back-link">
+        <a href="welcome.html">← Back to Welcome</a>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🚛 FleetFlow</h1>
+            <p>Sign in to your account or create a new one</p>
+            <div style="margin-top: 1rem;">
+                <a href="landing.html" class="dashboard-link">
+                    🏠 Go to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('login')">Sign In</button>
+        </div>
+
+        <!-- Login Tab -->
+        <div id="login" class="tab-content active">
+            <div class="demo-creds">
+                <strong>Demo Credentials:</strong>
+                Driver: driver@test.com / pass123<br/>
+                Shipper: shipper@test.com / pass123<br/>
+                Fleet Owner: owner@test.com / pass123<br/>
+                Admin: admin@test.com / pass123
+            </div>
+
+            <form id="loginForm" onsubmit="return login(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" name="email" placeholder="your@email.com" required />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" name="password" placeholder="••••••••" required />
+                </div>
+                <button type="submit">Sign In</button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 6px; border-left: 3px solid #667eea;">
+                <p style="color: #666; font-size: 0.9rem;">
+                    <strong>Note:</strong> New accounts can only be created by administrators. Please contact your system administrator for access.
+                </p>
+            </div>
+        </div>
+
+        <!-- Register Tab - Hidden, kept for admin use -->
+        <div id="register" class="tab-content" style="display: none !important;">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="regName" placeholder="John Doe"/>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="regEmail" placeholder="your@email.com"/>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="regPassword" placeholder="••••••••"/>
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="regRole" onchange="updateRoleFields()">
+                    <option value="">-- Select Role --</option>
+                    <option value="driver">Truck Driver</option>
+                    <option value="fleet_owner">Fleet Owner</option>
+                    <option value="shipper">Shipper / Load Provider</option>
+                </select>
+            </div>
+            <div id="roleFields"></div>
+            <button onclick="register()">Create Account</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:3001/api';
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+        }
+
+        function updateRoleFields() {
+            const role = document.getElementById('regRole').value;
+            let html = '';
+            
+            if (role === 'driver') {
+                html = `<div class="form-group">
+                    <label>License Number</label>
+                    <input type="text" id="licenseNumber" placeholder="DL123456789"/>
+                </div>`;
+            } else if (role === 'fleet_owner') {
+                html = `<div class="form-group">
+                    <label>Company Name</label>
+                    <input type="text" id="companyName" placeholder="Your Company Ltd"/>
+                </div>`;
+            }
+            document.getElementById('roleFields').innerHTML = html;
+        }
+
+        function login(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                alert('Please fill all fields');
+                return false;
+            }
+
+            // Show loading state
+            const submitBtn = e?.target?.querySelector('button[type="submit"]') || document.querySelector('#loginForm button[type="submit"]');
+            const originalText = submitBtn?.textContent;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Signing in...';
+            }
+
+            console.log('Attempting login for:', email);
+            console.log('API URL:', `${API_URL}/auth/login`);
+            
+            fetch(`${API_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            })
+            .then(async response => {
+                console.log('Response status:', response.status, response.statusText);
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    throw new Error(`Server returned non-JSON response: ${response.status} ${text}`);
+                }
+                const data = await response.json();
+                console.log('Response data:', data);
+                return data;
+            })
+            .then(data => {
+                if (data.error) {
+                    alert('❌ ' + data.error);
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
+                    return;
+                }
+                
+                if (!data.token || !data.user) {
+                    alert('❌ Invalid response from server');
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
+                    return;
+                }
+                
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('userId', data.user.id);
+                localStorage.setItem('userRole', data.user.role);
+
+                // Redirect based on role
+                const rolePages = { driver: 'driver.html', fleet_owner: 'fleet-owner.html', shipper: 'shipper.html', admin: 'admin.html' };
+                window.location.href = rolePages[data.user.role] || 'driver.html';
+            })
+            .catch(err => {
+                console.error('Login error:', err);
+                alert('❌ Login failed: ' + (err.message || 'Network error. Please check if the server is running.'));
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+            });
+            
+            return false;
+        }
+
+        function register() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const role = document.getElementById('regRole').value;
+
+            if (!name || !email || !password || !role) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const payload = { name, email, password, role };
+            
+            if (role === 'driver') {
+                payload.license_number = document.getElementById('licenseNumber').value;
+            } else if (role === 'fleet_owner') {
+                payload.company_name = document.getElementById('companyName').value;
+            }
+
+            fetch(`${API_URL}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    alert('❌ ' + data.error);
+                    return;
+                }
+
+                alert('✅ Account created successfully! Logging in...');
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('userId', data.user.id);
+                localStorage.setItem('userRole', data.user.role);
+
+                const rolePages = { driver: 'driver.html', fleet_owner: 'fleet-owner.html', shipper: 'shipper.html', admin: 'admin.html' };
+                window.location.href = rolePages[role] || 'driver.html';
+            });
+        }
+
+        // Check if already logged in
+        if (localStorage.getItem('token')) {
+            const role = localStorage.getItem('userRole');
+            const rolePages = { driver: 'driver.html', fleet_owner: 'fleet-owner.html', shipper: 'shipper.html', admin: 'admin.html' };
+            window.location.href = rolePages[role] || 'driver.html';
+        }
+    </script>
+</body>
+</html>

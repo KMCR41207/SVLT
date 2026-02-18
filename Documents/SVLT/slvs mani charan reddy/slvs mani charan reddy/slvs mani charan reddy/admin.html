@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow - Admin Dashboard</title>
+    <link rel="stylesheet" href="animated-bg.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: transparent; color: #333; min-height: 100vh; overflow-y: auto; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 2rem; position: relative; z-index: 100; }
+        nav { display: flex; gap: 2rem; align-items: center; }
+        nav a { color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 1rem; position: relative; z-index: 1; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.3s; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .stat-value { font-size: 2.5rem; font-weight: bold; color: #667eea; }
+        .stat-label { color: #666; font-size: 0.9rem; margin-top: 0.5rem; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; margin-top: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        th { background: #34495e; color: white; padding: 1rem; text-align: left; }
+        td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
+        button { padding: 0.6rem 1.2rem; border: none; border-radius: 4px; background: #667eea; color: white; cursor: pointer; font-weight: bold; }
+        button:hover { background: #5568d3; }
+        .back-btn-corner { position: fixed; top: auto; bottom: 2rem; left: 2rem; z-index: 1000; }
+        .back-btn-corner button { background: rgba(255, 255, 255, 0.9); color: #667eea; border: 1px solid rgba(102, 126, 234, 0.3); padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: all 0.3s; }
+        .back-btn-corner button:hover { background: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); transform: translateX(-3px); }
+        .dashboard-dropdown { position: relative; display: inline-block; margin-top: 0.5rem; z-index: 10000; }
+        .dashboard-btn { display: inline-block; padding: 0.5rem 1.2rem; background: rgba(255, 255, 255, 0.2); color: white; text-decoration: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.3); cursor: pointer; transition: all 0.3s; }
+        .dashboard-btn:hover { background: rgba(255, 255, 255, 0.3); }
+        .dropdown-content { display: none; position: absolute; top: calc(100% + 0.5rem); left: 0; background: white; min-width: 220px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); border-radius: 6px; z-index: 10001; }
+        .dropdown-content.show { display: block; }
+        .dropdown-content a { color: #333; padding: 0.8rem 1rem; text-decoration: none; display: block; transition: 0.3s; border-bottom: 1px solid #f0f0f0; }
+        .dropdown-content a:first-child { border-radius: 6px 6px 0 0; }
+        .dropdown-content a:last-child { border-bottom: none; border-radius: 0 0 6px 6px; }
+        .dropdown-content a:hover { background: #f5f5f5; color: #667eea; }
+    </style>
+</head>
+<body>
+    <div class="animated-gradient-bg"></div>
+    
+    <div class="back-btn-corner">
+        <button onclick="goBack()">← Back</button>
+    </div>
+    
+    <header>
+        <nav>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <h1 style="margin-right: auto;">⚙️ FleetFlow Admin</h1>
+                <div class="dashboard-dropdown">
+                    <div class="dashboard-btn" onclick="toggleDropdown(event)">
+                        📋 Options ▼
+                    </div>
+                    <div class="dropdown-content" id="dropdownMenu">
+                        <a href="welcome.html">🏠 Home</a>
+                        <a href="#" data-page="dashboard">📊 Dashboard</a>
+                        <a href="#" data-page="users">👥 Users</a>
+                        <a href="#" onclick="openCreateUserModal(); return false;">➕ Create New User</a>
+                        <a href="#" data-page="loads">📦 Loads</a>
+                        <a href="#" data-page="reports">📈 Reports</a>
+                    </div>
+                </div>
+            </div>
+            <a href="#" data-page="dashboard" style="color: white;">Dashboard</a>
+            <a href="#" data-page="users" style="color: white;">Users</a>
+            <a href="#" data-page="loads" style="color: white;">Loads</a>
+            <a href="#" data-page="reports" style="color: white;">Reports</a>
+            <button onclick="logout()" style="margin-left: auto;">Logout</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div id="dashboard" class="page active">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2>📊 System Overview</h2>
+                <button onclick="openCreateUserModal()" style="background: #27ae60; padding: 0.8rem 1.5rem; border: none; border-radius: 6px; color: white; font-weight: bold; cursor: pointer;">+ Create New User</button>
+            </div>
+            <div class="grid" style="margin-top: 2rem;">
+                <div class="stat-card" onclick="showStatDetails('users')">
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value" id="totalUsersCount">0</div>
+                </div>
+                <div class="stat-card" onclick="showStatDetails('trucks')">
+                    <div class="stat-label">Total Trucks</div>
+                    <div class="stat-value" id="totalTrucksCount">0</div>
+                </div>
+                <div class="stat-card" onclick="showStatDetails('open-loads')">
+                    <div class="stat-label">Open Loads</div>
+                    <div class="stat-value" id="openLoadsCount">0</div>
+                </div>
+                <div class="stat-card" onclick="showStatDetails('completed-loads')">
+                    <div class="stat-label">Completed Loads</div>
+                    <div class="stat-value" id="completedLoadsCount">0</div>
+                </div>
+                <div class="stat-card" onclick="showStatDetails('revenue')">
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-value" id="totalRevenueAmount" style="color: #27ae60;">$0</div>
+                </div>
+                <div class="stat-card" onclick="showStatDetails('disputes')">
+                    <div class="stat-label">Open Disputes</div>
+                    <div class="stat-value" id="openDisputesCount">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="users" class="page">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2>👥 User Management</h2>
+                <button onclick="openCreateUserModal()" style="background: #27ae60;">+ Create New User</button>
+            </div>
+            <div id="usersTableContainer" style="margin-top: 2rem;"></div>
+        </div>
+
+        <div id="loads" class="page">
+            <h2>📦 Load Management</h2>
+            <div id="loadsTableContainer" style="margin-top: 2rem;"></div>
+        </div>
+
+        <div id="disputes" class="page">
+            <h2>⚠️ Disputes & Fraud</h2>
+            <div style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;">
+                <select id="disputeStatusFilter" style="padding: 0.4rem 0.8rem; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="">All</option>
+                    <option value="open">Open</option>
+                    <option value="in_review">In Review</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+                <button onclick="loadDisputes()">Refresh</button>
+            </div>
+            <div id="disputesTableContainer"></div>
+        </div>
+
+        <div id="commission" class="page">
+            <h2>💰 Commission Management</h2>
+            <div id="commissionContainer" style="margin-top: 1rem;"></div>
+        </div>
+
+        <div id="reports" class="page">
+            <h2>📈 System Reports</h2>
+            <div id="reportsContainer" style="margin-top: 2rem;"></div>
+        </div>
+    </div>
+
+    <!-- Create User Modal -->
+    <div id="createUserModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2>Create New User</h2>
+                <button onclick="closeCreateUserModal()" style="background: #e74c3c; color: white; border: none; font-size: 1.5rem; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0;">&times;</button>
+            </div>
+            <form id="createUserForm" onsubmit="createUser(event)">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Full Name</label>
+                    <input type="text" id="newUserName" required style="width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px;" />
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Email</label>
+                    <input type="email" id="newUserEmail" required style="width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px;" />
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Password</label>
+                    <input type="password" id="newUserPassword" required style="width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px;" />
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Role</label>
+                    <select id="newUserRole" required onchange="updateRoleFields()" style="width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px;">
+                        <option value="">-- Select Role --</option>
+                        <option value="driver">Truck Driver</option>
+                        <option value="fleet_owner">Fleet Owner</option>
+                        <option value="shipper">Shipper / Load Provider</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+                <div id="roleSpecificFields"></div>
+                <button type="submit" style="width: 100%; padding: 0.8rem; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Create User</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Stat Details Modal -->
+    <div id="statDetailsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 2rem; border-radius: 8px; max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 id="statDetailsTitle">Details</h2>
+                <button onclick="closeStatDetailsModal()" style="background: #e74c3c; color: white; border: none; font-size: 1.5rem; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0;">&times;</button>
+            </div>
+            <div id="statDetailsContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:3001/api';
+        let token = localStorage.getItem('token');
+
+        if (!token) window.location.href = 'landing.html';
+
+        document.querySelectorAll('[data-page]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = e.target.dataset.page;
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(page).classList.add('active');
+                if (page === 'dashboard') loadDashboard();
+                if (page === 'users') loadUsers();
+                if (page === 'loads') loadLoads();
+                if (page === 'disputes') loadDisputes();
+                if (page === 'commission') loadCommission();
+                if (page === 'reports') loadReports();
+            });
+        });
+
+        function loadDashboard() {
+            fetch(`${API_URL}/admin/reports`, { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('totalUsersCount').textContent = data.total_users || 0;
+                    document.getElementById('totalTrucksCount').textContent = data.total_trucks || 0;
+                    document.getElementById('openLoadsCount').textContent = data.open_loads || 0;
+                    document.getElementById('completedLoadsCount').textContent = data.completed_loads || 0;
+                    document.getElementById('totalRevenueAmount').textContent = '$' + (data.total_revenue || 0).toFixed(2);
+                    const openDisputesEl = document.getElementById('openDisputesCount');
+                    if (openDisputesEl) openDisputesEl.textContent = data.open_disputes || 0;
+                });
+        }
+
+        function loadUsers() {
+            fetch(`${API_URL}/admin/users`, { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(r => r.json())
+                .then(users => {
+                    const html = `<table>
+                        <thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody>
+                        ${users.map(u => `<tr><td>${u.email}</td><td>${u.name || '-'}</td><td>${u.role}</td><td>${u.is_verified ? '✅ Active' : '❌ Inactive'}</td><td><button onclick="suspendUser('${u.id}')">Toggle</button></td></tr>`).join('')}
+                        </tbody>
+                    </table>`;
+                    document.getElementById('usersTableContainer').innerHTML = html;
+                });
+        }
+
+        function suspendUser(userId) {
+            const suspended = confirm('Suspend this user?');
+            if (suspended) {
+                fetch(`${API_URL}/admin/users/${userId}/suspend`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ suspended: true })
+                })
+                .then(() => { alert('✅ User status updated'); loadUsers(); });
+            }
+        }
+
+        function loadLoads() {
+            fetch(`${API_URL}/loads`, { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(r => r.json())
+                .then(loads => {
+                    const html = `<table>
+                        <thead><tr><th>Load</th><th>Shipper</th><th>Weight</th><th>Status</th></tr></thead>
+                        <tbody>
+                        ${loads.map(l => `<tr><td>${l.title}</td><td>#${l.shipper_id.substring(0, 8)}</td><td>${l.weight_tons}T</td><td>${l.status}</td></tr>`).join('')}
+                        </tbody>
+                    </table>`;
+                    document.getElementById('loadsTableContainer').innerHTML = html;
+                });
+        }
+
+        function loadReports() {
+            fetch(`${API_URL}/admin/reports`, { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(r => r.json())
+                .then(data => {
+                    const html = `<div style="background: white; padding: 2rem; border-radius: 8px;">
+                        <h3>System Metrics</h3>
+                        <p>Total Users: ${data.total_users || 0}</p>
+                        <p>Total Trucks: ${data.total_trucks || 0}</p>
+                        <p>Completed Loads: ${data.completed_loads || 0}</p>
+                        <p>Platform Revenue: $${(data.total_revenue || 0).toFixed(2)}</p>
+                    </div>`;
+                    document.getElementById('reportsContainer').innerHTML = html;
+                });
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'landing.html';
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.dashboard-btn')) {
+                const dropdowns = document.getElementsByClassName('dropdown-content');
+                for (let i = 0; i < dropdowns.length; i++) {
+                    dropdowns[i].classList.remove('show');
+                }
+            }
+        }
+
+        function openCreateUserModal() {
+            document.getElementById('createUserModal').style.display = 'flex';
+        }
+
+        function closeCreateUserModal() {
+            document.getElementById('createUserModal').style.display = 'none';
+            document.getElementById('createUserForm').reset();
+            document.getElementById('roleSpecificFields').innerHTML = '';
+        }
+
+        function closeStatDetailsModal() {
+            document.getElementById('statDetailsModal').style.display = 'none';
+        }
+
+        async function showStatDetails(type) {
+            const modal = document.getElementById('statDetailsModal');
+            const title = document.getElementById('statDetailsTitle');
+            const content = document.getElementById('statDetailsContent');
+            
+            modal.style.display = 'flex';
+            content.innerHTML = '<p style="text-align: center; padding: 2rem;">Loading...</p>';
+
+            try {
+                if (type === 'users') {
+                    title.textContent = 'All Users';
+                    const res = await fetch(`${API_URL}/admin/users`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    const users = await res.json();
+                    
+                    const roleColors = {
+                        'admin': '#c0392b',
+                        'fleet_owner': '#2980b9',
+                        'driver': '#27ae60',
+                        'shipper': '#8e44ad'
+                    };
+                    
+                    content.innerHTML = `
+                        <table>
+                            <thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Status</th></tr></thead>
+                            <tbody>
+                            ${users.map(u => `
+                                <tr>
+                                    <td>${u.email}</td>
+                                    <td>${u.name || '-'}</td>
+                                    <td><span style="background: ${roleColors[u.role] || '#999'}; color: white; padding: 0.3rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">${u.role}</span></td>
+                                    <td>${u.is_verified ? '✅ Active' : '❌ Inactive'}</td>
+                                </tr>
+                            `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else if (type === 'trucks') {
+                    title.textContent = 'All Trucks';
+                    const res = await fetch(`${API_URL}/admin/trucks`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    const trucks = await res.json();
+                    
+                    content.innerHTML = `
+                        <table>
+                            <thead><tr><th>Registration</th><th>Type</th><th>Capacity</th><th>Status</th><th>Owner</th></tr></thead>
+                            <tbody>
+                            ${trucks.map(t => `
+                                <tr>
+                                    <td>${t.registration_number}</td>
+                                    <td>${t.type || 'N/A'}</td>
+                                    <td>${t.capacity_tons} tons</td>
+                                    <td><span style="color: ${t.status === 'available' ? 'green' : t.status === 'on_trip' ? 'orange' : 'red'}">${t.status}</span></td>
+                                    <td>${t.owner_id ? '#' + t.owner_id.substring(0, 8) : 'N/A'}</td>
+                                </tr>
+                            `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else if (type === 'open-loads') {
+                    title.textContent = 'Open Loads';
+                    const res = await fetch(`${API_URL}/loads?status=open`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    const loads = await res.json();
+                    
+                    content.innerHTML = `
+                        <table>
+                            <thead><tr><th>Title</th><th>Weight</th><th>Route</th><th>Price</th><th>Shipper</th></tr></thead>
+                            <tbody>
+                            ${loads.map(l => `
+                                <tr>
+                                    <td>${l.title}</td>
+                                    <td>${l.weight_tons} tons</td>
+                                    <td>${l.pickup_location} → ${l.delivery_location}</td>
+                                    <td>${l.price_fixed ? '$' + l.price_fixed : 'Negotiable'}</td>
+                                    <td>#${l.shipper_id.substring(0, 8)}</td>
+                                </tr>
+                            `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else if (type === 'completed-loads') {
+                    title.textContent = 'Completed Loads';
+                    const res = await fetch(`${API_URL}/loads?status=delivered`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    const loads = await res.json();
+                    
+                    content.innerHTML = `
+                        <table>
+                            <thead><tr><th>Title</th><th>Weight</th><th>Route</th><th>Price</th><th>Status</th></tr></thead>
+                            <tbody>
+                            ${loads.map(l => `
+                                <tr>
+                                    <td>${l.title}</td>
+                                    <td>${l.weight_tons} tons</td>
+                                    <td>${l.pickup_location} → ${l.delivery_location}</td>
+                                    <td>${l.price_fixed ? '$' + l.price_fixed : 'N/A'}</td>
+                                    <td><span style="color: green;">✓ Delivered</span></td>
+                                </tr>
+                            `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else if (type === 'revenue') {
+                    title.textContent = 'Revenue Breakdown';
+                    const res = await fetch(`${API_URL}/admin/reports`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    const data = await res.json();
+                    
+                    const paymentsRes = await fetch(`${API_URL}/payments`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    const payments = await paymentsRes.json();
+                    
+                    const completed = payments.filter(p => p.status === 'completed');
+                    const pending = payments.filter(p => p.status === 'pending');
+                    
+                    content.innerHTML = `
+                        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h3 style="margin-bottom: 1rem;">Summary</h3>
+                            <p><strong>Total Revenue:</strong> $${(data.total_revenue || 0).toFixed(2)}</p>
+                            <p><strong>Completed Payments:</strong> ${completed.length}</p>
+                            <p><strong>Pending Payments:</strong> ${pending.length}</p>
+                        </div>
+                        <table>
+                            <thead><tr><th>Payment ID</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+                            <tbody>
+                            ${payments.map(p => `
+                                <tr>
+                                    <td>#${p.id.substring(0, 8)}</td>
+                                    <td>$${p.amount}</td>
+                                    <td><span style="color: ${p.status === 'completed' ? 'green' : 'orange'}">${p.status}</span></td>
+                                    <td>${new Date(p.created_at).toLocaleDateString()}</td>
+                                </tr>
+                            `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else if (type === 'disputes') {
+                    title.textContent = 'Open Disputes';
+                    const status = 'open';
+                    const res = await fetch(`${API_URL}/admin/disputes?status=${status}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    const disputes = await res.json();
+
+                    if (!disputes.length) {
+                        content.innerHTML = '<p style="text-align:center; padding:2rem;">No open disputes 🎉</p>';
+                        return;
+                    }
+
+                    content.innerHTML = `
+                        <table>
+                            <thead><tr><th>ID</th><th>Trip</th><th>Raised By</th><th>Against</th><th>Reason</th><th>Status</th></tr></thead>
+                            <tbody>
+                            ${disputes.map(d => `
+                                <tr>
+                                    <td>#${d.id.substring(0, 8)}</td>
+                                    <td>${d.trip_id ? '#' + d.trip_id.substring(0, 8) : '-'}</td>
+                                    <td>${d.raised_by_email || d.raised_by_id}</td>
+                                    <td>${d.against_email || d.against_user_id || '-'}</td>
+                                    <td>${d.reason}</td>
+                                    <td>${d.status}</td>
+                                </tr>
+                            `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            } catch (err) {
+                console.error('Failed to load stat details:', err);
+                content.innerHTML = '<p style="text-align: center; color: #e74c3c; padding: 2rem;">Failed to load data</p>';
+            }
+        }
+
+        function updateRoleFields() {
+            const role = document.getElementById('newUserRole').value;
+            let html = '';
+            
+            if (role === 'driver') {
+                html = `<div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">License Number</label>
+                    <input type="text" id="licenseNumber" placeholder="DL123456789" style="width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px;" />
+                </div>`;
+            } else if (role === 'fleet_owner') {
+                html = `<div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Company Name</label>
+                    <input type="text" id="companyName" placeholder="Your Company Ltd" style="width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px;" />
+                </div>`;
+            }
+            document.getElementById('roleSpecificFields').innerHTML = html;
+        }
+
+        async function createUser(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('newUserName').value;
+            const email = document.getElementById('newUserEmail').value;
+            const password = document.getElementById('newUserPassword').value;
+            const role = document.getElementById('newUserRole').value;
+
+            const payload = { name, email, password, role };
+            
+            if (role === 'driver') {
+                const licenseInput = document.getElementById('licenseNumber');
+                if (licenseInput) payload.license_number = licenseInput.value;
+            } else if (role === 'fleet_owner') {
+                const companyInput = document.getElementById('companyName');
+                if (companyInput) payload.company_name = companyInput.value;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                
+                if (res.ok) {
+                    alert('✅ User created successfully!');
+                    closeCreateUserModal();
+                    loadUsers();
+                } else {
+                    alert('❌ Failed to create user: ' + (data.error || 'Unknown error'));
+                }
+            } catch (err) {
+                console.error('Error creating user:', err);
+                alert('❌ Network error while creating user');
+            }
+        }
+
+        async function loadDisputes() {
+            const status = document.getElementById('disputeStatusFilter').value;
+            const url = status ? `${API_URL}/admin/disputes?status=${encodeURIComponent(status)}` : `${API_URL}/admin/disputes`;
+            const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+            const disputes = await res.json();
+
+            const container = document.getElementById('disputesTableContainer');
+            if (!disputes.length) {
+                container.innerHTML = '<p style="padding:2rem; text-align:center;">No disputes found.</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <table>
+                    <thead><tr><th>ID</th><th>Status</th><th>Raised By</th><th>Against</th><th>Reason</th><th>Created</th></tr></thead>
+                    <tbody>
+                    ${disputes.map(d => `
+                        <tr>
+                            <td>#${d.id.substring(0, 8)}</td>
+                            <td>${d.status}</td>
+                            <td>${d.raised_by_email || d.raised_by_id}</td>
+                            <td>${d.against_email || d.against_user_id || '-'}</td>
+                            <td>${d.reason}</td>
+                            <td>${new Date(d.created_at).toLocaleString()}</td>
+                        </tr>
+                    `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        async function loadCommission() {
+            const res = await fetch(`${API_URL}/admin/commission`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const data = await res.json();
+            const container = document.getElementById('commissionContainer');
+
+            container.innerHTML = `
+                <div style="background:white; padding:1.5rem; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05); max-width:420px;">
+                    <h3 style="margin-bottom:1rem;">Current Commission</h3>
+                    <p style="margin-bottom:0.5rem;"><strong>Name:</strong> ${data.name || 'Default'}</p>
+                    <p style="margin-bottom:1rem;"><strong>Percentage:</strong> ${data.percentage || 0}%</p>
+                    <form id="commissionForm" onsubmit="return saveCommission(event)">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:bold;">Update Percentage (%)</label>
+                        <input type="number" id="commissionPercentage" value="${data.percentage || 0}" step="0.1" min="0" max="100"
+                               style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid #ccc; margin-bottom:0.8rem;" />
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:bold;">Name (optional)</label>
+                        <input type="text" id="commissionName" value="${data.name || 'Platform Commission'}"
+                               style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid #ccc; margin-bottom:0.8rem;" />
+                        <button type="submit">Save</button>
+                    </form>
+                </div>
+            `;
+        }
+
+        async function saveCommission(event) {
+            event.preventDefault();
+            const percentage = parseFloat(document.getElementById('commissionPercentage').value);
+            const name = document.getElementById('commissionName').value.trim();
+            if (isNaN(percentage)) {
+                alert('Enter a valid percentage');
+                return false;
+            }
+
+            const res = await fetch(`${API_URL}/admin/commission`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: name || 'Platform Commission', percentage })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                alert('Failed to save commission: ' + (data.error || 'Unknown error'));
+                return false;
+            }
+            alert('Commission updated.');
+            loadCommission();
+            loadDashboard();
+            return false;
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>

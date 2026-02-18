@@ -1,0 +1,11 @@
+{
+  "name": "slvs-inner",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "echo \"no dev server configured here either\"",
+    "start": "npm run dev"
+  },
+  "dependencies": {
+    "motion": "^12.34.0"
+  }
+}
