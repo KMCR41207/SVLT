@@ -1,0 +1,1050 @@
+3
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow – Our Services & Features</title>
+    <meta name="description"
+        content="Discover everything FleetFlow offers - from real-time tracking and tyre management to analytics, expense logging and driver tools.">
+    <link rel="stylesheet" href="animated-bg.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --purple: #667eea;
+            --violet: #764ba2;
+            --teal: #11998e;
+            --orange: #f7971e;
+            --dark: #1a1a2e;
+            --light: #f4f6ff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f6ff;
+            color: #1a1a2e;
+            overflow-x: hidden;
+        }
+
+        /* ── Sticky Navbar ── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.12);
+            padding: 0.9rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .nav-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--purple), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-back {
+            font-size: 0.88rem;
+            color: #777;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: color 0.2s;
+        }
+
+        .nav-back:hover {
+            color: var(--purple);
+        }
+
+        .nav-cta {
+            padding: 0.55rem 1.6rem;
+            background: linear-gradient(135deg, var(--purple), var(--violet));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            transition: opacity 0.2s, transform 0.2s;
+            box-shadow: 0 4px 14px rgba(102, 126, 234, 0.35);
+        }
+
+        .nav-cta:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* ── Page Hero Banner ── */
+        .page-hero {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--violet) 100%);
+            color: white;
+            text-align: center;
+            padding: 7rem 2rem 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            left: -3rem;
+            top: 50%;
+            transform: translateY(-50%) rotate(15deg);
+        }
+
+        .page-hero::after {
+            content: '';
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            right: -3rem;
+            bottom: -2rem;
+        }
+
+        .page-hero .brand-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            color: white;
+            letter-spacing: 0.04em;
+            text-shadow: 0 4px 32px rgba(0, 0, 0, 0.25), 0 0 60px rgba(255, 255, 255, 0.15);
+            margin-bottom: 1rem;
+            line-height: 1;
+        }
+
+        .page-hero .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 50px;
+            padding: 0.35rem 1.1rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1.2rem;
+            backdrop-filter: blur(6px);
+        }
+
+        .page-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3.4rem);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+        }
+
+        .page-hero p {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 580px;
+            margin: 0 auto;
+            line-height: 1.75;
+        }
+
+        /* ── Stats Bar ── */
+        .stats-bar {
+            background: white;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .stat-item {
+            padding: 1.8rem 1rem;
+            border-right: 1px solid #f0f0f0;
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-num {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--purple), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.78rem;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            margin-top: 0.25rem;
+        }
+
+        /* ── Section common ── */
+        section {
+            padding: 5rem 2rem;
+        }
+
+        .section-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--purple);
+            margin-bottom: 0.7rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 0.8rem;
+        }
+
+        .section-sub {
+            color: #888;
+            font-size: 0.97rem;
+            max-width: 540px;
+            line-height: 1.75;
+            margin-bottom: 3rem;
+        }
+
+        /* ── About Section ── */
+        .about-section {
+            background: white;
+            padding: 5rem 2rem;
+        }
+
+        .about-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.6fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-visual {
+            text-align: center;
+        }
+
+        .about-truck-wrap {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-truck-emoji {
+            font-size: 7rem;
+            display: block;
+            filter: drop-shadow(0 8px 24px rgba(102, 126, 234, 0.3));
+            animation: floatTruck 3s ease-in-out infinite;
+        }
+
+        @keyframes floatTruck {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .about-glow {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.25);
+            filter: blur(10px);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+
+            0%,
+            100% {
+                opacity: 0.5;
+                width: 80px;
+            }
+
+            50% {
+                opacity: 0.9;
+                width: 120px;
+            }
+        }
+
+        .about-visual-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1.3;
+            margin-bottom: 0.4rem;
+        }
+
+        .about-visual-sub {
+            font-size: 0.85rem;
+            color: #aaa;
+            letter-spacing: 0.06em;
+        }
+
+        .about-content .section-title {
+            margin-bottom: 0.5rem;
+        }
+
+        .about-lead {
+            font-size: 0.97rem;
+            color: #777;
+            line-height: 1.75;
+            margin-bottom: 2rem;
+        }
+
+        .about-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        .about-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.9rem;
+            font-size: 0.93rem;
+            color: #444;
+            line-height: 1.65;
+        }
+
+        .al-icon {
+            min-width: 14px;
+            color: var(--purple);
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: inline-block;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .al-icon.al-admin {
+            color: #f7971e;
+        }
+
+        .about-list li strong {
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .about-inner {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+        }
+
+        /* ── Role Cards Grid ── */
+        .roles-section {
+            background: var(--light);
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .role-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 1.8rem;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.08);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            transition: transform 0.35s, box-shadow 0.35s;
+            opacity: 0;
+            transform: translateY(24px);
+        }
+
+        .role-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.55s ease, transform 0.55s ease, box-shadow 0.35s;
+        }
+
+        .role-card:hover {
+            transform: translateY(-6px) !important;
+            box-shadow: 0 18px 50px rgba(102, 126, 234, 0.18);
+        }
+
+        .role-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.4rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .role-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .gi-driver {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        .gi-owner {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .gi-shipper {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .gi-admin {
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+        }
+
+        .role-card-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .role-card-header .sub {
+            font-size: 0.78rem;
+            color: #bbb;
+            margin-top: 0.15rem;
+        }
+
+        .checklist {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.7rem;
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .ck {
+            width: 14px;
+            color: var(--purple);
+            font-size: 0.9rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .ck-g {
+            color: #22c55e;
+        }
+
+        .ck-p {
+            color: var(--purple);
+        }
+
+        .ck-pk {
+            color: #f5576c;
+        }
+
+        .ck-o {
+            color: var(--orange);
+        }
+
+        /* ── How It Works ── */
+        .how-section {
+            background: white;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .step-card {
+            padding: 2rem 1.5rem;
+            opacity: 0;
+            transform: translateY(24px);
+        }
+
+        .step-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .step-num {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple), var(--violet));
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.1rem;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+        }
+
+        .step-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-card p {
+            font-size: 0.86rem;
+            color: #888;
+            line-height: 1.7;
+        }
+
+        /* ── Highlight Banner ── */
+        .highlight-banner {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--violet) 100%);
+            color: white;
+            padding: 5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight-banner::before {
+            content: '';
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .highlight-inner {
+            max-width: 960px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .highlight-inner h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-inner p {
+            font-size: 0.97rem;
+            color: rgba(255, 255, 255, 0.82);
+            line-height: 1.8;
+            margin-bottom: 1.4rem;
+        }
+
+        .hl-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .hl-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.91rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .hl-list li::before {
+            content: '-';
+            color: white;
+            font-weight: 700;
+            margin-right: 0.5rem;
+        }
+
+        .highlight-emoji {
+            font-size: 7rem;
+            opacity: 0.9;
+            line-height: 1;
+        }
+
+        /* ── Final CTA ── */
+        .cta-section {
+            background: var(--light);
+            text-align: center;
+            padding: 6rem 2rem;
+        }
+
+        .cta-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: #888;
+            font-size: 1rem;
+            max-width: 480px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.75;
+        }
+
+        .cta-btns {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-solid {
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, var(--purple), var(--violet));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+        }
+
+        .btn-solid:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 42px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-outline {
+            padding: 1rem 3rem;
+            background: transparent;
+            color: var(--purple);
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 2px solid var(--purple);
+            transition: all 0.3s;
+        }
+
+        .btn-outline:hover {
+            background: var(--purple);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            background: var(--dark);
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.82rem;
+        }
+
+        .footer span {
+            color: var(--purple);
+            font-weight: 600;
+        }
+
+        @media (max-width: 680px) {
+            .highlight-inner {
+                grid-template-columns: 1fr;
+            }
+
+            .highlight-emoji {
+                display: none;
+            }
+
+            .nav-back {
+                display: none;
+            }
+        }
+
+        .img-placeholder {
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-weight: 500;
+            font-size: 0.75rem;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .img-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 1;
+        }
+
+        .img-placeholder.has-logo::after {
+            content: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══ NAVBAR ═══ -->
+    <nav class="navbar">
+        <a href="landing.html" class="nav-brand">
+            <span class="img-placeholder has-logo"
+                style="width: 32px; height: 32px; display: inline-flex; vertical-align: middle; margin-right: 8px; border-radius: 6px; border: none; background: transparent;">
+                <img src="fleetflow-logo.jpg" alt="FleetFlow Logo"
+                    style="width:32px;height:32px;object-fit:contain;border-radius:6px;">
+            </span>
+            FleetFlow
+        </a>
+        <div class="nav-links">
+            <a href="landing.html" class="nav-back">Back to Home</a>
+            <a href="register.html" class="nav-cta">Register / Sign In</a>
+        </div>
+    </nav>
+
+    <!-- ═══ PAGE HERO ═══ -->
+    <section class="page-hero">
+        <div class="brand-title">FleetFlow</div>
+        <div class="badge">Our Services</div>
+        <h1>Everything You Need to<br>Run Your Fleet Smarter</h1>
+        <p>FleetFlow is a complete logistics platform built for truck drivers, fleet owners, shippers and administrators
+            - all in one place.</p>
+    </section>
+
+    <!-- ═══ STATS BAR ═══ -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-num">500+</div>
+            <div class="stat-label">Trucks Managed</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">1,200+</div>
+            <div class="stat-label">Trips Completed</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">350+</div>
+            <div class="stat-label">Registered Drivers</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">99.8%</div>
+            <div class="stat-label">Platform Uptime</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">24/7</div>
+            <div class="stat-label">Support Available</div>
+        </div>
+    </div>
+
+    <!-- ═══ QUICK ACTIONS ═══ -->
+    <div style="text-align: center; padding: 3rem 2rem 1rem; background: white;">
+        <div class="cta-btns">
+            <a href="register.html" class="btn-solid">Register Now - It's Free</a>
+            <a href="auth.html" class="btn-outline">Sign In to Dashboard</a>
+        </div>
+    </div>
+
+    <!-- ═══ ABOUT / PLATFORM INFO ═══ -->
+    <section class="about-section">
+        <div class="about-inner">
+            <!-- Left: visual -->
+            <div class="about-visual">
+                <div class="about-truck-wrap">
+                    <div class="img-placeholder has-logo about-truck-emoji"
+                        style="width: 120px; height: 120px; border-radius: 24px; border: none; background: transparent;">
+                        <img src="fleetflow-logo.jpg" alt="FleetFlow Logo"
+                            style="width:120px;height:120px;object-fit:contain;border-radius:24px;">
+                    </div>
+                    <div class="about-glow"></div>
+                </div>
+                <h3 class="about-visual-title">Built for Everyone<br>in the Fleet</h3>
+                <p class="about-visual-sub">Drivers | Owners | Admins</p>
+            </div>
+
+            <!-- Right: checklist -->
+            <div class="about-content">
+                <p class="section-label">About FleetFlow</p>
+                <h2 class="section-title">What Our Platform Enables</h2>
+                <p class="about-lead">FleetFlow is designed to connect every stakeholder in the logistics chain - from
+                    the driver on the road to the owner in the office.</p>
+
+                <ul class="about-list">
+                    <li>
+                        <span>The truck drivers can login to their <strong>Mobile App</strong>.</span>
+                    </li>
+                    <li>
+                        <span>The truck drivers can update data such as <strong>distance travelled</strong> by the truck
+                            as per odometer, expenses such as <strong>fuel expenses, tolls, etc.</strong> incurred
+                            during their trips.</span>
+                    </li>
+                    <li>
+                        <span>The truck owners can login to their <strong>Mobile App</strong>.</span>
+                    </li>
+                    <li>
+                        <span>The truck owners can view reports regarding the truck such as <strong>usage of tyres,
+                                change of tyres, insurance coverage</strong>, and number of kilometers the truck has
+                            travelled, truck drivers information, and so on.</span>
+                    </li>
+                    <li>
+                        <span>The truck owners can view the <strong>expenses incurred</strong> for the truck and its
+                            trip, such as fuel expenses, tolls, etc.</span>
+                    </li>
+                    <li>
+                        <span>The <strong>Admin</strong> can login to the <strong>Web App</strong>.</span>
+                    </li>
+                    <li>
+                        <span>The truck owners can <strong>update the data</strong> regarding the truck such as usage of
+                            tyres, change of tyres, insurance coverage, and number of kilometers the truck has
+                            travelled, and so on. The truck owners can also <strong>upload and manage the data of truck
+                                drivers</strong>.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ ROLE-BASED FEATURES ═══ -->
+    <section class="roles-section">
+        <div class="section-inner">
+            <p class="section-label">What We Offer</p>
+            <h2 class="section-title">Powerful Tools for Every Role</h2>
+            <p class="section-sub">Each user type gets a dedicated experience with tools built exactly for their needs.
+            </p>
+
+            <div class="roles-grid">
+
+                <!-- Drivers -->
+                <div class="role-card">
+                    <div class="role-card-header">
+                        <div class="img-placeholder role-icon gi-driver"
+                            style="width: 50px; height: 50px; border-radius: 13px;">
+                            <img src="truck-drivers-icon.png" alt="Truck Drivers Icon" style="width:50px;height:50px;object-fit:contain;border-radius:13px;">
+                        </div>
+                        <div>
+                            <h3>Truck Drivers</h3>
+                            <div class="sub">Mobile-first driver tools</div>
+                        </div>
+                    </div>
+                    <ul class="checklist">
+                        <li>Login to the dedicated Driver Mobile App.</li>
+                        <li>Update distance travelled via odometer readings.</li>
+                        <li>Log trip expenses - fuel costs, tolls &amp; more.</li>
+                        <li>Receive real-time job assignments from fleet owners.</li>
+                        <li>View trip history and personal earnings summary.</li>
+                        <li>Get notified on schedule changes and delivery updates.</li>
+                    </ul>
+                </div>
+
+                <!-- Fleet Owners -->
+                <div class="role-card">
+                    <div class="role-card-header">
+                        <div class="img-placeholder role-icon gi-owner"
+                            style="width: 50px; height: 50px; border-radius: 13px;">
+                            <img src="fleet-owners-icon.png" alt="Fleet Owners Icon" style="width:50px;height:50px;object-fit:contain;border-radius:13px;">
+                        </div>
+                        <div>
+                            <h3>Fleet Owners</h3>
+                            <div class="sub">Full fleet visibility &amp; control</div>
+                        </div>
+                    </div>
+                    <ul class="checklist">
+                        <li>Login to the fleet owner web dashboard.</li>
+                        <li>View tyre usage, insurance coverage &amp; km reports.</li>
+                        <li>Monitor fuel expenses, tolls and all trip costs.</li>
+                        <li>Upload &amp; manage truck details and driver data.</li>
+                        <li>Track revenue, profit &amp; costs via analytics graphs.</li>
+                        <li>Assign drivers to trucks and manage active trips.</li>
+                        <li>Monitor truck condition - tyres, fuel &amp; service records.</li>
+                    </ul>
+                </div>
+
+                <!-- Shippers -->
+                <div class="role-card">
+                    <div class="role-card-header">
+                        <div class="img-placeholder role-icon gi-shipper"
+                            style="width: 50px; height: 50px; border-radius: 13px;">
+                            <img src="shippers-icon.png" alt="Shippers Icon" style="width:50px;height:50px;object-fit:contain;border-radius:13px;">
+                        </div>
+                        <div>
+                            <h3>Shippers</h3>
+                            <div class="sub">Post loads &amp; track deliveries</div>
+                        </div>
+                    </div>
+                    <ul class="checklist">
+                        <li>Post loads with pickup &amp; delivery details.</li>
+                        <li>Get instantly matched with available trucks.</li>
+                        <li>Track your shipment status in real-time.</li>
+                        <li>Secure payments &amp; digital invoicing.</li>
+                        <li>24/7 support &amp; delivery notifications.</li>
+                        <li>View delivery history &amp; rate your experience.</li>
+                    </ul>
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ HOW IT WORKS ═══ -->
+    <section class="how-section">
+        <div class="section-inner">
+            <p class="section-label">Simple Process</p>
+            <h2 class="section-title">How FleetFlow Works</h2>
+            <p class="section-sub">Get started in minutes. No complex setup - just register and go.</p>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-num">1</div>
+                    <h4>Create Your Account</h4>
+                    <p>Register as a driver, fleet owner, shipper or admin. Each role gets a tailored experience built
+                        for their workflow.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">2</div>
+                    <h4>Set Up Your Fleet</h4>
+                    <p>Fleet owners add trucks, assign drivers and configure capacity. Drivers receive job assignments
+                        instantly on their app.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">3</div>
+                    <h4>Post or Accept Jobs</h4>
+                    <p>Shippers post loads with pickup and delivery details. FleetFlow matches them instantly with
+                        available trucks nearby.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">4</div>
+                    <h4>Track &amp; Analyse</h4>
+                    <p>Monitor live trip data, expenses, tyre health and fleet performance - all in one dashboard with
+                        beautiful analytics.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ HIGHLIGHT BANNER ═══ -->
+    <section class="highlight-banner">
+        <div class="highlight-inner">
+            <div>
+                <h2>Complete Visibility of Your Fleet's Health</h2>
+                <p>FleetFlow goes beyond simple tracking. Get deep insights into every aspect of truck condition so you
+                    never miss a service, replacement, or expiry.</p>
+                <ul class="hl-list">
+                    <li>Individual tyre health monitoring for all 6 tyres per truck</li>
+                    <li>Fuel level tracking with colour-coded low fuel alerts</li>
+                    <li>Last service date, days since service &amp; overdue warnings</li>
+                    <li>Insurance coverage &amp; document expiry reminders</li>
+                    <li>Odometer-based distance tracking per trip</li>
+                    <li>Revenue, cost &amp; profit graphs per truck and fleet-wide</li>
+                </ul>
+            </div>
+            <div class="img-placeholder has-logo highlight-emoji"
+                style="width: 140px; height: 140px; border-radius: 20px; background: rgba(255,255,255,0.12); border: none;">
+                <img src="fleetflow-logo.jpg" alt="FleetFlow Logo"
+                    style="width:140px;height:140px;object-fit:contain;border-radius:20px;">
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FINAL CTA ═══ -->
+    <section class="cta-section">
+        <h2>Ready to Take Control of Your Fleet?</h2>
+        <p>Join hundreds of fleet owners and drivers already using FleetFlow to run smarter, more efficient operations
+            every day.</p>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer">
+        <p>&copy; 2026 <span>FleetFlow</span>. All rights reserved. Next-Gen Fleet Management &amp; Logistics Platform.
+        </p>
+    </footer>
+
+    <script>
+        // Scroll-triggered fade-in for cards
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, entry.target.dataset.delay || 0);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.role-card').forEach((el, i) => {
+            el.dataset.delay = i * 100;
+            observer.observe(el);
+        });
+
+        document.querySelectorAll('.step-card').forEach((el, i) => {
+            el.dataset.delay = i * 120;
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>
