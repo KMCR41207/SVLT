@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow - Shipper Dashboard</title>
+    <link rel="stylesheet" href="enterprise-design-system.css">
+    <style>
+        /* Page-specific styles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .section-title {
+            font-size: var(--font-2xl);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Post Load Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .form-grid-full {
+            grid-column: 1 / -1;
+        }
+
+        /* Load Table Actions */
+        .table-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--border-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+        }
+
+        .modal-close:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: var(--space-lg);
+        }
+
+        .modal-footer {
+            padding: var(--space-lg);
+            border-top: 1px solid var(--border-primary);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-md);
+        }
+
+        /* Bid Card */
+        .bid-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            border: 1px solid var(--border-primary);
+        }
+
+        .bid-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-sm);
+        }
+
+        .bid-driver {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .bid-price {
+            font-size: var(--font-xl);
+            font-weight: 700;
+            color: var(--green-success);
+        }
+
+        .bid-message {
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-md);
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <a href="landing-enterprise.html" class="sidebar-brand">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect width="32" height="32" rx="8" fill="#FF7A00"/>
+                <path d="M16 8L8 14V24H14V18H18V24H24V14L16 8Z" fill="white"/>
+            </svg>
+            FleetFlow
+        </a>
+        <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link active" data-page="dashboard">
+                    <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    Dashboard
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link" data-page="post-load">
+                    <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Post Load
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link" data-page="my-loads">
+                    <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                    My Loads
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link" data-page="payments">
+                    <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                    </svg>
+                    Payments
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Top Header -->
+    <header class="top-header">
+        <h1 class="header-title">Shipper Dashboard</h1>
+        <div class="header-actions">
+            <span id="userName" style="font-size: var(--font-sm); color: var(--text-secondary); margin-right: var(--space-md);"></span>
+            <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page active">
+            <div class="content-header">
+                <h2 class="content-title">Dashboard Overview</h2>
+                <p class="content-subtitle">Monitor your shipments and logistics operations</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="kpi-card">
+                    <div class="kpi-value" id="totalLoadsCount">0</div>
+                    <div class="kpi-label">Total Loads Posted</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="openCount">0</div>
+                    <div class="kpi-label">Open Loads</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="assignedCount">0</div>
+                    <div class="kpi-label">Assigned Loads</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="pendingPayments">$0</div>
+                    <div class="kpi-label">Pending Payments</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Post Load Page -->
+        <div id="post-load" class="page">
+            <div class="content-header">
+                <h2 class="content-title">Post New Load</h2>
+                <p class="content-subtitle">Create a new shipment request</p>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <form id="postLoadForm" onsubmit="postLoad(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Load Title *</label>
+                                <input type="text" class="form-input" id="loadTitle" placeholder="e.g., Construction Materials" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Goods Type</label>
+                                <input type="text" class="form-input" id="goodsType" placeholder="e.g., Steel, Electronics">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Weight (tons) *</label>
+                                <input type="number" class="form-input" id="weightTons" placeholder="0.0" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Fixed Price (optional)</label>
+                                <input type="number" class="form-input" id="priceFixed" placeholder="Leave empty for bidding" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Pickup Location *</label>
+                                <input type="text" class="form-input" id="pickupLocation" placeholder="City, State" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Delivery Location *</label>
+                                <input type="text" class="form-input" id="deliveryLocation" placeholder="City, State" required>
+                            </div>
+                            <div class="form-group form-grid-full">
+                                <label class="form-label">Additional Notes</label>
+                                <textarea class="form-textarea" id="loadNotes" placeholder="Special instructions, handling requirements, etc."></textarea>
+                            </div>
+                        </div>
+                        <div style="margin-top: var(--space-lg);">
+                            <button type="submit" class="btn btn-primary btn-lg">Post Load</button>
+                            <button type="button" class="btn btn-secondary btn-lg" onclick="document.getElementById('postLoadForm').reset()">Clear Form</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Loads Page -->
+        <div id="my-loads" class="page">
+            <div class="section-header">
+                <h2 class="section-title">My Loads</h2>
+                <button class="btn btn-primary" onclick="switchPage('post-load')">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Post New Load
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table class="table" id="loadsTable">
+                    <thead>
+                        <tr>
+                            <th>Load Title</th>
+                            <th>Weight</th>
+                            <th>Route</th>
+                            <th>Status</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="loadsTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: var(--space-xl); color: var(--text-muted);">
+                                Loading...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Payments Page -->
+        <div id="payments" class="page">
+            <div class="content-header">
+                <h2 class="content-title">Payments & Invoices</h2>
+                <p class="content-subtitle">Track your payment history</p>
+            </div>
+
+            <div class="table-container">
+                <table class="table" id="paymentsTable">
+                    <thead>
+                        <tr>
+                            <th>Invoice ID</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentsTableBody">
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: var(--space-xl); color: var(--text-muted);">
+                                Loading...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bids Modal -->
+    <div id="bidsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Load Bids</h3>
+                <button class="modal-close" onclick="closeBidsModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="bidsModalBody">
+                Loading...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:3001/api';
+        let token = localStorage.getItem('token');
+
+        if (!token) {
+            window.location.href = 'auth-enterprise.html';
+        }
+
+        // Page Navigation
+        function switchPage(pageName) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageName).classList.add('active');
+
+            document.querySelectorAll('.sidebar-nav-link').forEach(l => l.classList.remove('active'));
+            const link = document.querySelector(`.sidebar-nav-link[data-page="${pageName}"]`);
+            if (link) link.classList.add('active');
+
+            if (pageName === 'dashboard') loadDashboard();
+            if (pageName === 'my-loads') loadMyLoads();
+            if (pageName === 'payments') loadPayments();
+        }
+
+        document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.getAttribute('data-page');
+                switchPage(page);
+            });
+        });
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'auth-enterprise.html';
+        }
+
+        async function loadUserInfo() {
+            try {
+                const res = await fetch(`${API_URL}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const user = await res.json();
+                document.getElementById('userName').textContent = user.name || user.email;
+            } catch (err) {
+                console.error('Failed to load user info:', err);
+            }
+        }
+
+        async function postLoad(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('loadTitle').value.trim();
+            const goodsType = document.getElementById('goodsType').value.trim();
+            const weightTons = document.getElementById('weightTons').value;
+            const pickupLocation = document.getElementById('pickupLocation').value.trim();
+            const deliveryLocation = document.getElementById('deliveryLocation').value.trim();
+            const priceFixed = document.getElementById('priceFixed').value;
+
+            const payload = {
+                title,
+                goods_type: goodsType,
+                weight_tons: parseFloat(weightTons),
+                pickup_location: pickupLocation,
+                delivery_location: deliveryLocation,
+                price_fixed: priceFixed ? parseFloat(priceFixed) : null
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/loads`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (data.error) {
+                    alert('Failed to post load: ' + data.error);
+                    return;
+                }
+
+                alert('Load posted successfully!');
+                document.getElementById('postLoadForm').reset();
+                switchPage('my-loads');
+            } catch (err) {
+                console.error('Failed to post load:', err);
+                alert('Network error: ' + err.message);
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const res = await fetch(`${API_URL}/admin/dashboard/stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                document.getElementById('totalLoadsCount').textContent = data.total_loads || 0;
+                document.getElementById('openCount').textContent = data.open_loads || 0;
+                document.getElementById('assignedCount').textContent = data.assigned_loads || 0;
+                document.getElementById('pendingPayments').textContent = '$' + (data.pending_payments || 0).toFixed(2);
+            } catch (err) {
+                console.error('Failed to load dashboard:', err);
+            }
+        }
+
+        async function loadMyLoads() {
+            try {
+                const res = await fetch(`${API_URL}/loads`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const loads = await res.json();
+                const tbody = document.getElementById('loadsTableBody');
+
+                if (loads.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: var(--space-xl); color: var(--text-muted);">
+                                No loads posted yet. Click "Post New Load" to get started.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = loads.map(load => {
+                    const statusClass = {
+                        'open': 'badge-info',
+                        'assigned': 'badge-warning',
+                        'in_transit': 'badge-info',
+                        'delivered': 'badge-success',
+                        'cancelled': 'badge-error'
+                    }[load.status] || 'badge-neutral';
+
+                    return `
+                        <tr>
+                            <td><strong>${load.title}</strong></td>
+                            <td>${load.weight_tons}T</td>
+                            <td>${load.pickup_location} → ${load.delivery_location}</td>
+                            <td><span class="badge ${statusClass}">${load.status}</span></td>
+                            <td><strong>$${load.price_fixed || 'Bidding'}</strong></td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="btn btn-secondary btn-sm" onclick="viewBids('${load.id}')">View Bids</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error('Failed to load loads:', err);
+                document.getElementById('loadsTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: var(--space-xl); color: var(--red-error);">
+                            Failed to load data. Please try again.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        async function viewBids(loadId) {
+            const modal = document.getElementById('bidsModal');
+            const body = document.getElementById('bidsModalBody');
+            modal.classList.add('active');
+            body.innerHTML = 'Loading bids...';
+
+            try {
+                const res = await fetch(`${API_URL}/loads/${loadId}/bids`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const bids = await res.json();
+
+                if (bids.length === 0) {
+                    body.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: var(--space-xl);">No bids received yet.</p>';
+                    return;
+                }
+
+                body.innerHTML = bids.map(bid => `
+                    <div class="bid-card">
+                        <div class="bid-header">
+                            <span class="bid-driver">Driver: ${bid.driver_name || 'Unknown'}</span>
+                            <span class="bid-price">$${bid.proposed_price}</span>
+                        </div>
+                        <div class="bid-message">${bid.message || 'No message provided'}</div>
+                        <button class="btn btn-primary btn-sm" onclick="acceptBid('${loadId}', '${bid.driver_id}')">Accept Bid</button>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load bids:', err);
+                body.innerHTML = '<p style="text-align: center; color: var(--red-error); padding: var(--space-xl);">Failed to load bids.</p>';
+            }
+        }
+
+        function closeBidsModal() {
+            document.getElementById('bidsModal').classList.remove('active');
+        }
+
+        async function acceptBid(loadId, driverId) {
+            if (!confirm('Accept this bid and assign the load to this driver?')) return;
+
+            try {
+                const res = await fetch(`${API_URL}/loads/${loadId}/assign`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ driver_id: driverId })
+                });
+
+                if (res.ok) {
+                    alert('Bid accepted! Load assigned to driver.');
+                    closeBidsModal();
+                    loadMyLoads();
+                } else {
+                    alert('Failed to accept bid');
+                }
+            } catch (err) {
+                console.error('Failed to accept bid:', err);
+                alert('Error accepting bid');
+            }
+        }
+
+        async function loadPayments() {
+            try {
+                const res = await fetch(`${API_URL}/payments`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const payments = await res.json();
+                const tbody = document.getElementById('paymentsTableBody');
+
+                if (payments.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: var(--space-xl); color: var(--text-muted);">
+                                No payment records yet.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = payments.map(payment => {
+                    const statusClass = {
+                        'pending': 'badge-warning',
+                        'completed': 'badge-success',
+                        'failed': 'badge-error'
+                    }[payment.status] || 'badge-neutral';
+
+                    return `
+                        <tr>
+                            <td><strong>INV-${payment.id.substring(0, 8)}</strong></td>
+                            <td><strong>$${payment.amount.toFixed(2)}</strong></td>
+                            <td><span class="badge ${statusClass}">${payment.status}</span></td>
+                            <td>${new Date(payment.created_at).toLocaleDateString()}</td>
+                            <td>
+                                <button class="btn btn-ghost btn-sm">View Details</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error('Failed to load payments:', err);
+                document.getElementById('paymentsTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: var(--space-xl); color: var(--red-error);">
+                            Failed to load data. Please try again.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Initialize
+        loadUserInfo();
+        loadDashboard();
+    </script>
+</body>
+</html>

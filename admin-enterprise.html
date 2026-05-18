@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - FleetFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="enterprise-design-system.css">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <a href="#" class="sidebar-brand">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect width="32" height="32" rx="8" fill="#FF7A00"/>
+                <path d="M8 16h16M16 8v16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            FleetFlow
+        </a>
+        
+        <nav>
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-item">
+                    <a href="#dashboard" class="sidebar-nav-link active" onclick="showPage('dashboard')">
+                        <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="#users" class="sidebar-nav-link" onclick="showPage('users')">
+                        <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        Users
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="#loads" class="sidebar-nav-link" onclick="showPage('loads')">
+                        <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                        Loads
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="#fleet" class="sidebar-nav-link" onclick="showPage('fleet')">
+                        <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="3" width="15" height="13" rx="2"/>
+                            <path d="M16 8h5l3 3v5h-2m-4 0H2"/>
+                            <circle cx="5.5" cy="18.5" r="2.5"/>
+                            <circle cx="18.5" cy="18.5" r="2.5"/>
+                        </svg>
+                        Fleet
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="#analytics" class="sidebar-nav-link" onclick="showPage('analytics')">
+                        <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v18h18"/>
+                            <path d="m19 9-5 5-4-4-3 3"/>
+                        </svg>
+                        Analytics
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="#settings" class="sidebar-nav-link" onclick="showPage('settings')">
+                        <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"/>
+                        </svg>
+                        Settings
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Top Header -->
+    <header class="top-header">
+        <h1 class="header-title">Admin Dashboard</h1>
+        <div class="header-actions">
+            <button class="btn btn-ghost">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+            </button>
+            <button class="btn btn-secondary" onclick="logout()">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                </svg>
+                Logout
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page-content">
+            <div class="content-header">
+                <h2 class="content-title">System Overview</h2>
+                <p class="content-subtitle">Real-time operational metrics and platform status</p>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-4 mb-xl">
+                <div class="kpi-card">
+                    <div class="kpi-value" id="totalUsersCount">0</div>
+                    <div class="kpi-label">Total Users</div>
+                    <div class="kpi-trend positive">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5l-7 7-5-5"/>
+                        </svg>
+                        +12% this month
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-value" id="totalTrucksCount">0</div>
+                    <div class="kpi-label">Active Trucks</div>
+                    <div class="kpi-trend positive">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5l-7 7-5-5"/>
+                        </svg>
+                        +8% this month
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-value" id="openLoadsCount">0</div>
+                    <div class="kpi-label">Open Loads</div>
+                    <span class="badge badge-warning mt-sm">Pending</span>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-value" id="totalRevenueAmount">$0</div>
+                    <div class="kpi-label">Total Revenue</div>
+                    <div class="kpi-trend positive">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5l-7 7-5-5"/>
+                        </svg>
+                        +24% this month
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="h3">Recent Users</h3>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-container" style="border: none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 40px;">
+                                        <span class="text-muted">Loading users...</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Page -->
+        <div id="users-page" class="page-content" style="display: none;">
+            <div class="content-header flex justify-between items-center">
+                <div>
+                    <h2 class="content-title">User Management</h2>
+                    <p class="content-subtitle">Manage all platform users and permissions</p>
+                </div>
+                <button class="btn btn-primary" onclick="openCreateUserModal()">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Create User
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-container" style="border: none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allUsersTableBody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 40px;">
+                                        <span class="text-muted">Loading users...</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loads Page -->
+        <div id="loads-page" class="page-content" style="display: none;">
+            <div class="content-header">
+                <h2 class="content-title">Load Management</h2>
+                <p class="content-subtitle">Monitor and manage all shipments</p>
+            </div>
+
+            <div class="card">
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-container" style="border: none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Load ID</th>
+                                    <th>Shipper</th>
+                                    <th>Route</th>
+                                    <th>Weight</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loadsTableBody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 40px;">
+                                        <span class="text-muted">Loading loads...</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:3001/api';
+        let token = localStorage.getItem('token');
+
+        if (!token) window.location.href = 'auth.html';
+
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none');
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.sidebar-nav-link').forEach(l => l.classList.remove('active'));
+            
+            // Show selected page
+            const page = document.getElementById(pageName + '-page');
+            if (page) page.style.display = 'block';
+            
+            // Add active class to clicked nav link
+            event.target.closest('.sidebar-nav-link').classList.add('active');
+            
+            // Load data for the page
+            if (pageName === 'dashboard') loadDashboard();
+            if (pageName === 'users') loadAllUsers();
+            if (pageName === 'loads') loadLoads();
+        }
+
+        async function loadDashboard() {
+            try {
+                const res = await fetch(`${API_URL}/admin/reports`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                document.getElementById('totalUsersCount').textContent = data.total_users || 0;
+                document.getElementById('totalTrucksCount').textContent = data.total_trucks || 0;
+                document.getElementById('openLoadsCount').textContent = data.open_loads || 0;
+                document.getElementById('totalRevenueAmount').textContent = '$' + (data.total_revenue || 0).toFixed(2);
+                
+                // Load recent users
+                loadRecentUsers();
+            } catch (err) {
+                console.error('Failed to load dashboard:', err);
+            }
+        }
+
+        async function loadRecentUsers() {
+            try {
+                const res = await fetch(`${API_URL}/admin/users`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const users = await res.json();
+                
+                const tbody = document.getElementById('usersTableBody');
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;"><span class="text-muted">No users found</span></td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = users.slice(0, 5).map(user => `
+                    <tr>
+                        <td><strong>${user.name || 'N/A'}</strong></td>
+                        <td>${user.email}</td>
+                        <td><span class="badge badge-info">${user.role}</span></td>
+                        <td><span class="badge ${user.is_verified ? 'badge-success' : 'badge-warning'}">${user.is_verified ? 'Active' : 'Pending'}</span></td>
+                        <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn btn-sm btn-ghost">View</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load users:', err);
+            }
+        }
+
+        async function loadAllUsers() {
+            try {
+                const res = await fetch(`${API_URL}/admin/users`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const users = await res.json();
+                
+                const tbody = document.getElementById('allUsersTableBody');
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;"><span class="text-muted">No users found</span></td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = users.map(user => `
+                    <tr>
+                        <td><strong>${user.name || 'N/A'}</strong></td>
+                        <td>${user.email}</td>
+                        <td><span class="badge badge-info">${user.role}</span></td>
+                        <td><span class="badge ${user.is_verified ? 'badge-success' : 'badge-warning'}">${user.is_verified ? 'Active' : 'Pending'}</span></td>
+                        <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn btn-sm btn-ghost">Edit</button>
+                            <button class="btn btn-sm btn-ghost">Suspend</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load users:', err);
+            }
+        }
+
+        async function loadLoads() {
+            try {
+                const res = await fetch(`${API_URL}/loads`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const loads = await res.json();
+                
+                const tbody = document.getElementById('loadsTableBody');
+                if (loads.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;"><span class="text-muted">No loads found</span></td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = loads.map(load => {
+                    let statusBadge = 'badge-neutral';
+                    if (load.status === 'delivered') statusBadge = 'badge-success';
+                    if (load.status === 'in_progress') statusBadge = 'badge-info';
+                    if (load.status === 'open') statusBadge = 'badge-warning';
+                    
+                    return `
+                        <tr>
+                            <td><strong>#${load.id.substring(0, 8)}</strong></td>
+                            <td>${load.shipper_id ? '#' + load.shipper_id.substring(0, 8) : 'N/A'}</td>
+                            <td>${load.pickup_location} → ${load.delivery_location}</td>
+                            <td>${load.weight_tons} tons</td>
+                            <td><span class="badge ${statusBadge}">${load.status}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-ghost">View</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error('Failed to load loads:', err);
+            }
+        }
+
+        function openCreateUserModal() {
+            alert('Create User modal - to be implemented');
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'auth.html';
+        }
+
+        // Initialize
+        loadDashboard();
+    </script>
+</body>
+</html>

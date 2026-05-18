@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow - Create Account</title>
+    <link rel="stylesheet" href="enterprise-design-system.css">
+    <style>
+        body {
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: var(--space-xl);
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-primary);
+            padding: var(--space-md) var(--space-xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: var(--font-xl);
+            font-weight: 700;
+            color: var(--navy-primary);
+            text-decoration: none;
+        }
+
+        /* Registration Container */
+        .register-container {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            max-width: 600px;
+            width: 100%;
+            margin-top: 80px;
+        }
+
+        .register-header {
+            padding: var(--space-xl);
+            text-align: center;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .register-header h1 {
+            font-size: var(--font-3xl);
+            font-weight: 700;
+            color: var(--navy-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .register-header p {
+            font-size: var(--font-base);
+            color: var(--text-secondary);
+        }
+
+        .register-body {
+            padding: var(--space-xl);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .form-row-full {
+            grid-column: 1 / -1;
+        }
+
+        /* Role Selection */
+        .role-selection {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .role-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .role-card:hover {
+            border-color: var(--orange-primary);
+            background: var(--bg-card);
+        }
+
+        .role-card.selected {
+            border-color: var(--orange-primary);
+            background: rgba(255, 122, 0, 0.05);
+        }
+
+        .role-card input[type="radio"] {
+            display: none;
+        }
+
+        .role-icon {
+            font-size: 32px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .role-name {
+            font-size: var(--font-base);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .role-desc {
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+            margin-top: var(--space-xs);
+        }
+
+        /* Password Strength */
+        .password-strength {
+            height: 4px;
+            background: var(--bg-secondary);
+            border-radius: 2px;
+            margin-top: var(--space-sm);
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .password-strength-text {
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+            margin-top: var(--space-xs);
+        }
+
+        /* Success Screen */
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: var(--space-2xl);
+        }
+
+        .success-screen.active {
+            display: block;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--green-success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-lg);
+            font-size: 40px;
+            color: white;
+        }
+
+        .success-screen h2 {
+            font-size: var(--font-2xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .success-screen p {
+            font-size: var(--font-base);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-xl);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .role-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .register-container {
+                margin-top: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="landing-enterprise.html" class="nav-brand">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect width="32" height="32" rx="8" fill="#FF7A00"/>
+                <path d="M16 8L8 14V24H14V18H18V24H24V14L16 8Z" fill="white"/>
+            </svg>
+            FleetFlow
+        </a>
+        <a href="auth-enterprise.html" class="btn btn-secondary btn-sm">Sign In</a>
+    </nav>
+
+    <!-- Registration Container -->
+    <div class="register-container">
+        <!-- Registration Form -->
+        <div id="registerForm">
+            <div class="register-header">
+                <h1>Create Your Account</h1>
+                <p>Join FleetFlow and start managing your logistics operations</p>
+            </div>
+
+            <div class="register-body">
+                <form onsubmit="handleRegister(event)">
+                    <!-- Role Selection -->
+                    <div class="form-group">
+                        <label class="form-label">Select Your Role *</label>
+                        <div class="role-selection">
+                            <label class="role-card" onclick="selectRole('shipper')">
+                                <input type="radio" name="role" value="shipper" required>
+                                <div class="role-icon">📦</div>
+                                <div class="role-name">Shipper</div>
+                                <div class="role-desc">Post loads and manage shipments</div>
+                            </label>
+                            <label class="role-card" onclick="selectRole('driver')">
+                                <input type="radio" name="role" value="driver" required>
+                                <div class="role-icon">🚚</div>
+                                <div class="role-name">Driver</div>
+                                <div class="role-desc">Find loads and earn money</div>
+                            </label>
+                            <label class="role-card" onclick="selectRole('fleet_owner')">
+                                <input type="radio" name="role" value="fleet_owner" required>
+                                <div class="role-icon">🏢</div>
+                                <div class="role-name">Fleet Owner</div>
+                                <div class="role-desc">Manage trucks and drivers</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">First Name *</label>
+                            <input type="text" class="form-input" id="firstName" placeholder="John" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Last Name *</label>
+                            <input type="text" class="form-input" id="lastName" placeholder="Doe" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Email Address *</label>
+                            <input type="email" class="form-input" id="email" placeholder="john@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="tel" class="form-input" id="phone" placeholder="+1 (555) 000-0000" required>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Password *</label>
+                            <input type="password" class="form-input" id="password" placeholder="Min. 6 characters" required oninput="checkPasswordStrength()">
+                            <div class="password-strength">
+                                <div class="password-strength-bar" id="strengthBar"></div>
+                            </div>
+                            <div class="password-strength-text" id="strengthText"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm Password *</label>
+                            <input type="password" class="form-input" id="confirmPassword" placeholder="Re-enter password" required>
+                        </div>
+                    </div>
+
+                    <!-- Company Information (for fleet owners) -->
+                    <div id="companyFields" style="display: none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Company Name</label>
+                                <input type="text" class="form-input" id="companyName" placeholder="ABC Logistics">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Fleet Size</label>
+                                <input type="number" class="form-input" id="fleetSize" placeholder="Number of trucks">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div style="margin-top: var(--space-xl);">
+                        <button type="submit" class="btn btn-primary btn-lg w-full" id="submitBtn">
+                            Create Account
+                        </button>
+                    </div>
+
+                    <!-- Sign In Link -->
+                    <div style="text-align: center; margin-top: var(--space-lg);">
+                        <span style="color: var(--text-secondary); font-size: var(--font-sm);">
+                            Already have an account?
+                            <a href="auth-enterprise.html" style="color: var(--orange-primary); font-weight: 600; text-decoration: none;">Sign In</a>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Success Screen -->
+        <div id="successScreen" class="success-screen">
+            <div class="success-icon">✓</div>
+            <h2>Account Created Successfully!</h2>
+            <p>Welcome to FleetFlow. Your account has been created and you're ready to start.</p>
+            <button class="btn btn-primary btn-lg" onclick="goToDashboard()">Go to Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:3001/api';
+        let selectedRole = null;
+
+        function selectRole(role) {
+            selectedRole = role;
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.querySelector(`input[value="${role}"]`).checked = true;
+
+            // Show/hide company fields for fleet owners
+            const companyFields = document.getElementById('companyFields');
+            if (role === 'fleet_owner') {
+                companyFields.style.display = 'block';
+            } else {
+                companyFields.style.display = 'none';
+            }
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+
+            let strength = 0;
+            if (password.length >= 6) strength++;
+            if (password.length >= 10) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+            const configs = [
+                { width: '0%', color: '#E5E7EB', text: '' },
+                { width: '25%', color: '#EF4444', text: 'Weak' },
+                { width: '50%', color: '#EAB308', text: 'Fair' },
+                { width: '75%', color: '#3B82F6', text: 'Good' },
+                { width: '100%', color: '#22C55E', text: 'Strong' }
+            ];
+
+            const config = configs[Math.min(strength, 4)];
+            strengthBar.style.width = config.width;
+            strengthBar.style.background = config.color;
+            strengthText.textContent = config.text;
+            strengthText.style.color = config.color;
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const role = document.querySelector('input[name="role"]:checked')?.value;
+
+            // Validation
+            if (!role) {
+                alert('Please select your role');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating Account...';
+
+            const payload = {
+                name: `${firstName} ${lastName}`,
+                email,
+                password,
+                role,
+                phone
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+
+                if (data.error) {
+                    alert('Registration failed: ' + data.error);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Create Account';
+                    return;
+                }
+
+                // Save session
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('userId', data.user.id);
+                localStorage.setItem('userRole', data.user.role);
+                localStorage.setItem('userName', data.user.name);
+
+                // Show success screen
+                document.getElementById('registerForm').style.display = 'none';
+                document.getElementById('successScreen').classList.add('active');
+
+            } catch (err) {
+                console.error('Registration failed:', err);
+                alert('Network error. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account';
+            }
+        }
+
+        function goToDashboard() {
+            const role = localStorage.getItem('userRole');
+            const dashboards = {
+                'shipper': 'shipper-enterprise.html',
+                'driver': 'driver-enterprise.html',
+                'fleet_owner': 'fleet-owner-enterprise.html',
+                'admin': 'admin-enterprise.html'
+            };
+            window.location.href = dashboards[role] || 'landing-enterprise.html';
+        }
+
+        // Redirect if already logged in
+        if (localStorage.getItem('token')) {
+            goToDashboard();
+        }
+    </script>
+</body>
+</html>

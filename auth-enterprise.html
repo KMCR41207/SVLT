@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - FleetFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="enterprise-design-system.css">
+    <style>
+        body {
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: var(--space-xl);
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .auth-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-primary);
+            padding: var(--space-2xl);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .auth-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--orange-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+        }
+
+        .auth-title {
+            font-size: var(--font-2xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .auth-subtitle {
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+        }
+
+        .demo-credentials {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .demo-credentials-title {
+            font-size: var(--font-xs);
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-sm);
+        }
+
+        .demo-credential-item {
+            font-size: var(--font-xs);
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: var(--space-xl) 0;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .auth-divider span {
+            padding: 0 var(--space-md);
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: var(--space-xl);
+            padding-top: var(--space-xl);
+            border-top: 1px solid var(--border-primary);
+        }
+
+        .auth-footer-text {
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+        }
+
+        .auth-footer-link {
+            color: var(--orange-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer-link:hover {
+            text-decoration: underline;
+        }
+
+        .form-input-icon {
+            position: relative;
+        }
+
+        .form-input-icon svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .form-input-icon input {
+            padding-left: 42px;
+        }
+
+        .alert {
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            font-size: var(--font-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .alert-error {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #FCA5A5;
+        }
+
+        .alert-success {
+            background: #DCFCE7;
+            color: #166534;
+            border: 1px solid #86EFAC;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <svg width="24" height="24" fill="none" stroke="white" stroke-width="2">
+                        <rect x="1" y="3" width="15" height="13" rx="2"/>
+                        <path d="M16 8h5l3 3v5h-2m-4 0H2"/>
+                        <circle cx="5.5" cy="18.5" r="2.5"/>
+                        <circle cx="18.5" cy="18.5" r="2.5"/>
+                    </svg>
+                </div>
+                <h1 class="auth-title">Sign In</h1>
+                <p class="auth-subtitle">Access your FleetFlow dashboard</p>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <div class="demo-credentials">
+                <div class="demo-credentials-title">Demo Accounts</div>
+                <div class="demo-credential-item">Admin: admin@test.com / pass123</div>
+                <div class="demo-credential-item">Fleet Owner: owner@test.com / pass123</div>
+                <div class="demo-credential-item">Driver: driver@test.com / pass123</div>
+                <div class="demo-credential-item">Shipper: shipper@test.com / pass123</div>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <div class="form-input-icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <path d="m22 6-10 7L2 6"/>
+                        </svg>
+                        <input 
+                            type="email" 
+                            id="loginEmail" 
+                            class="form-input" 
+                            placeholder="your@email.com"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="form-input-icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        <input 
+                            type="password" 
+                            id="loginPassword" 
+                            class="form-input" 
+                            placeholder="••••••••"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full" id="loginBtn">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
+                    </svg>
+                    Sign In
+                </button>
+            </form>
+
+            <div class="auth-divider">
+                <span>or</span>
+            </div>
+
+            <a href="register.html" class="btn btn-secondary w-full">
+                Create New Account
+            </a>
+
+            <div class="auth-footer">
+                <p class="auth-footer-text">
+                    <a href="landing-enterprise.html" class="auth-footer-link">← Back to Home</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:3001/api';
+
+        function showAlert(message, type = 'error') {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            if (!email || !password) {
+                showAlert('Please fill in all fields');
+                return;
+            }
+            
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span>Signing in...</span>';
+            
+            try {
+                const res = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await res.json();
+                
+                if (!res.ok || data.error) {
+                    showAlert(data.error || 'Login failed');
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = `
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
+                        </svg>
+                        Sign In
+                    `;
+                    return;
+                }
+                
+                if (!data.token || !data.user) {
+                    showAlert('Invalid response from server');
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = `
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
+                        </svg>
+                        Sign In
+                    `;
+                    return;
+                }
+                
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('userId', data.user.id);
+                localStorage.setItem('userRole', data.user.role);
+                localStorage.setItem('userName', data.user.name || email);
+                
+                showAlert('Login successful! Redirecting...', 'success');
+                
+                // Redirect based on role
+                const rolePages = {
+                    driver: 'driver.html',
+                    fleet_owner: 'fleet-owner.html',
+                    shipper: 'shipper.html',
+                    admin: 'admin-enterprise.html'
+                };
+                
+                setTimeout(() => {
+                    window.location.href = rolePages[data.user.role] || 'admin-enterprise.html';
+                }, 1000);
+                
+            } catch (err) {
+                console.error('Login error:', err);
+                showAlert('Network error. Please check if the server is running.');
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = `
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
+                    </svg>
+                    Sign In
+                `;
+            }
+        }
+
+        // Check if already logged in
+        if (localStorage.getItem('token')) {
+            const role = localStorage.getItem('userRole');
+            const rolePages = {
+                driver: 'driver.html',
+                fleet_owner: 'fleet-owner.html',
+                shipper: 'shipper.html',
+                admin: 'admin-enterprise.html'
+            };
+            window.location.href = rolePages[role] || 'admin-enterprise.html';
+        }
+    </script>
+</body>
+</html>

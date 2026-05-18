@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow - Driver Dashboard</title>
+    <link rel="stylesheet" href="enterprise-design-system.css">
+    <style>
+        /* Mobile-First Driver Optimizations */
+        body {
+            background: var(--bg-primary);
+        }
+
+        /* Mobile Header - Simplified */
+        .mobile-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--navy-primary);
+            padding: var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+        }
+
+        .mobile-header h1 {
+            font-size: var(--font-lg);
+            font-weight: 700;
+            color: var(--text-inverse);
+        }
+
+        .mobile-header .btn {
+            padding: 8px 16px;
+            font-size: var(--font-sm);
+        }
+
+        /* Main Content - Mobile Optimized */
+        .mobile-content {
+            padding-top: 64px;
+            padding-bottom: var(--space-xl);
+            min-height: 100vh;
+        }
+
+        /* Welcome Card - High Contrast */
+        .welcome-card {
+            background: var(--navy-primary);
+            color: var(--text-inverse);
+            padding: var(--space-xl);
+            margin: var(--space-md);
+            border-radius: var(--radius-lg);
+        }
+
+        .welcome-card h2 {
+            font-size: var(--font-2xl);
+            font-weight: 700;
+            color: var(--text-inverse);
+            margin-bottom: var(--space-sm);
+        }
+
+        .welcome-card p {
+            font-size: var(--font-base);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Mobile Tabs - Large Touch Targets */
+        .mobile-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            padding: var(--space-md);
+            overflow-x: auto;
+            background: var(--bg-card);
+            border-bottom: 2px solid var(--border-primary);
+        }
+
+        .mobile-tab {
+            flex-shrink: 0;
+            padding: 12px 24px;
+            font-size: var(--font-base);
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .mobile-tab.active {
+            color: var(--orange-primary);
+            border-bottom-color: var(--orange-primary);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: var(--space-md);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Load Card - High Visibility */
+        .load-card-mobile {
+            background: var(--bg-card);
+            border: 2px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+            box-shadow: var(--shadow-card);
+        }
+
+        .load-card-mobile h3 {
+            font-size: var(--font-xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-md);
+        }
+
+        .load-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .load-info-row:last-child {
+            border-bottom: none;
+        }
+
+        .load-info-label {
+            font-size: var(--font-sm);
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .load-info-value {
+            font-size: var(--font-base);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .load-price {
+            font-size: var(--font-2xl);
+            font-weight: 700;
+            color: var(--green-success);
+        }
+
+        /* Large Action Buttons - Outdoor Optimized */
+        .btn-mobile-action {
+            width: 100%;
+            padding: 18px 24px;
+            font-size: var(--font-lg);
+            font-weight: 700;
+            border-radius: var(--radius-lg);
+            margin-top: var(--space-md);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Trip Status Card */
+        .trip-status-card {
+            background: var(--bg-card);
+            border-left: 4px solid var(--blue-info);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+            box-shadow: var(--shadow-card);
+        }
+
+        .trip-status-card.picked_up {
+            border-left-color: var(--amber-warning);
+        }
+
+        .trip-status-card.in_transit {
+            border-left-color: var(--blue-info);
+        }
+
+        .trip-status-card.delivered {
+            border-left-color: var(--green-success);
+        }
+
+        /* Earnings Summary */
+        .earnings-summary {
+            background: linear-gradient(135deg, var(--green-success), #16A34A);
+            color: var(--text-inverse);
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            margin: var(--space-md);
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .earnings-amount {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+        }
+
+        .earnings-label {
+            font-size: var(--font-base);
+            opacity: 0.9;
+        }
+
+        /* Payment Card */
+        .payment-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+            box-shadow: var(--shadow-card);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .payment-info h4 {
+            font-size: var(--font-lg);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .payment-date {
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+        }
+
+        .payment-amount {
+            font-size: var(--font-2xl);
+            font-weight: 700;
+            color: var(--green-success);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-2xl);
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: var(--space-md);
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: var(--font-xl);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-sm);
+        }
+
+        /* High Contrast Mode for Sunlight */
+        @media (prefers-contrast: high) {
+            .load-card-mobile,
+            .trip-status-card,
+            .payment-card {
+                border-width: 3px;
+            }
+        }
+
+        /* Desktop Override */
+        @media (min-width: 768px) {
+            .mobile-header {
+                display: none;
+            }
+
+            .mobile-content {
+                margin-left: 260px;
+                margin-top: 64px;
+                padding-top: 0;
+            }
+
+            .sidebar {
+                display: block;
+            }
+
+            .top-header {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Desktop Sidebar -->
+    <aside class="sidebar" style="display: none;">
+        <a href="landing-enterprise.html" class="sidebar-brand">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect width="32" height="32" rx="8" fill="#FF7A00"/>
+                <path d="M16 8L8 14V24H14V18H18V24H24V14L16 8Z" fill="white"/>
+            </svg>
+            FleetFlow
+        </a>
+        <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link active" data-tab="available-loads">
+                    <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                    Available Loads
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link" data-tab="my-trips">
+                    <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    My Trips
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-link" data-tab="earnings">
+                    <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Earnings
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Desktop Top Header -->
+    <header class="top-header" style="display: none;">
+        <h1 class="header-title">Driver Dashboard</h1>
+        <div class="header-actions">
+            <span id="userName" style="font-size: var(--font-sm); color: var(--text-secondary); margin-right: var(--space-md);"></span>
+            <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <h1>FleetFlow Driver</h1>
+        <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+    </header>
+
+    <!-- Mobile Content -->
+    <div class="mobile-content">
+        <!-- Welcome Card -->
+        <div class="welcome-card">
+            <h2>Welcome, <span id="userNameMobile">Driver</span>!</h2>
+            <p>Manage your loads, trips, and earnings</p>
+        </div>
+
+        <!-- Mobile Tabs -->
+        <div class="mobile-tabs">
+            <button class="mobile-tab active" onclick="switchTab('available-loads')">Available Loads</button>
+            <button class="mobile-tab" onclick="switchTab('my-trips')">My Trips</button>
+            <button class="mobile-tab" onclick="switchTab('earnings')">Earnings</button>
+        </div>
+
+        <!-- Available Loads Tab -->
+        <div id="available-loads" class="tab-content active">
+            <div id="loadsList"></div>
+        </div>
+
+        <!-- My Trips Tab -->
+        <div id="my-trips" class="tab-content">
+            <div id="tripsList"></div>
+        </div>
+
+        <!-- Earnings Tab -->
+        <div id="earnings" class="tab-content">
+            <div id="paymentsList"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:3001/api';
+        let token = localStorage.getItem('token');
+
+        if (!token) {
+            window.location.href = 'auth-enterprise.html';
+        }
+
+        function switchTab(tabName) {
+            // Update mobile tabs
+            document.querySelectorAll('.mobile-tab').forEach(t => t.classList.remove('active'));
+            const activeTab = Array.from(document.querySelectorAll('.mobile-tab')).find(t => 
+                t.getAttribute('onclick').includes(tabName)
+            );
+            if (activeTab) activeTab.classList.add('active');
+
+            // Update sidebar links
+            document.querySelectorAll('.sidebar-nav-link').forEach(l => l.classList.remove('active'));
+            const activeLink = document.querySelector(`.sidebar-nav-link[data-tab="${tabName}"]`);
+            if (activeLink) activeLink.classList.add('active');
+
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            const content = document.getElementById(tabName);
+            if (content) content.classList.add('active');
+
+            // Load data
+            if (tabName === 'available-loads') loadAvailableLoads();
+            if (tabName === 'my-trips') loadMyTrips();
+            if (tabName === 'earnings') loadEarnings();
+        }
+
+        // Sidebar navigation
+        document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const tab = link.getAttribute('data-tab');
+                if (tab) switchTab(tab);
+            });
+        });
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'auth-enterprise.html';
+        }
+
+        async function loadUserInfo() {
+            try {
+                const res = await fetch(`${API_URL}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const user = await res.json();
+                const name = user.name || user.email;
+                document.getElementById('userName').textContent = name;
+                document.getElementById('userNameMobile').textContent = name;
+            } catch (err) {
+                console.error('Failed to load user info:', err);
+            }
+        }
+
+        async function loadAvailableLoads() {
+            try {
+                const res = await fetch(`${API_URL}/loads?status=open`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const loads = await res.json();
+                const container = document.getElementById('loadsList');
+
+                if (loads.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📦</div>
+                            <h3>No Available Loads</h3>
+                            <p>Check back later for new opportunities</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = loads.map(load => `
+                    <div class="load-card-mobile">
+                        <h3>${load.title}</h3>
+                        <div class="load-info-row">
+                            <span class="load-info-label">From</span>
+                            <span class="load-info-value">${load.pickup_location}</span>
+                        </div>
+                        <div class="load-info-row">
+                            <span class="load-info-label">To</span>
+                            <span class="load-info-value">${load.delivery_location}</span>
+                        </div>
+                        <div class="load-info-row">
+                            <span class="load-info-label">Weight</span>
+                            <span class="load-info-value">${load.weight_tons} tons</span>
+                        </div>
+                        <div class="load-info-row">
+                            <span class="load-info-label">Price</span>
+                            <span class="load-price">$${load.price_fixed || 'Negotiable'}</span>
+                        </div>
+                        <button class="btn btn-primary btn-mobile-action" onclick="applyForLoad('${load.id}')">
+                            Apply for This Load
+                        </button>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load available loads:', err);
+                document.getElementById('loadsList').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Failed to Load Data</h3>
+                        <p>Please check your connection and try again</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function applyForLoad(loadId) {
+            const priceStr = prompt('Enter your proposed price ($):');
+            if (priceStr === null) return;
+            const proposed_price = parseFloat(priceStr);
+            if (isNaN(proposed_price) || proposed_price <= 0) {
+                alert('Please enter a valid price.');
+                return;
+            }
+            try {
+                const res = await fetch(`${API_URL}/loads/${loadId}/bids`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ proposed_price, message: 'I am interested in this load' })
+                });
+
+                if (res.ok) {
+                    alert('Application submitted successfully!');
+                    loadAvailableLoads();
+                } else {
+                    const err = await res.json();
+                    alert('Failed to apply for load: ' + (err.error || 'Unknown error'));
+                }
+            } catch (err) {
+                console.error('Failed to apply:', err);
+                alert('Error applying for load');
+            }
+        }
+
+        async function loadMyTrips() {
+            try {
+                const res = await fetch(`${API_URL}/trips`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const trips = await res.json();
+                const container = document.getElementById('tripsList');
+
+                if (trips.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🚚</div>
+                            <h3>No Active Trips</h3>
+                            <p>Apply for loads to start earning</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = trips.map(trip => {
+                    const statusBadge = {
+                        'assigned': 'badge-info',
+                        'picked_up': 'badge-warning',
+                        'in_transit': 'badge-info',
+                        'delivered': 'badge-success'
+                    }[trip.status] || 'badge-neutral';
+
+                    const nextAction = {
+                        'assigned': { label: 'Mark as Picked Up', status: 'picked_up' },
+                        'picked_up': { label: 'Mark as In Transit', status: 'in_transit' },
+                        'in_transit': { label: 'Mark as Delivered', status: 'delivered' }
+                    }[trip.status];
+
+                    return `
+                        <div class="trip-status-card ${trip.status}">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
+                                <h3 style="margin: 0;">Trip #${trip.id.substring(0, 8)}</h3>
+                                <span class="badge ${statusBadge}">${trip.status.replace('_', ' ')}</span>
+                            </div>
+                            <div class="load-info-row">
+                                <span class="load-info-label">Started</span>
+                                <span class="load-info-value">${trip.start_time ? new Date(trip.start_time).toLocaleDateString() : 'Not started'}</span>
+                            </div>
+                            ${nextAction ? `
+                                <button class="btn btn-success btn-mobile-action" onclick="updateTripStatus('${trip.id}', '${nextAction.status}')">
+                                    ${nextAction.label}
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error('Failed to load trips:', err);
+                document.getElementById('tripsList').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Failed to Load Data</h3>
+                        <p>Please check your connection and try again</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function updateTripStatus(tripId, status) {
+            try {
+                const res = await fetch(`${API_URL}/trips/${tripId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                if (res.ok) {
+                    alert('Trip status updated!');
+                    loadMyTrips();
+                } else {
+                    alert('Failed to update trip status');
+                }
+            } catch (err) {
+                console.error('Failed to update:', err);
+                alert('Error updating trip status');
+            }
+        }
+
+        async function loadEarnings() {
+            try {
+                const res = await fetch(`${API_URL}/payments`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const payments = await res.json();
+                const container = document.getElementById('paymentsList');
+
+                if (payments.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">💰</div>
+                            <h3>No Earnings Yet</h3>
+                            <p>Complete trips to start earning</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const total = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
+                container.innerHTML = `
+                    <div class="earnings-summary">
+                        <div class="earnings-amount">$${total.toFixed(2)}</div>
+                        <div class="earnings-label">Total Earnings</div>
+                    </div>
+                    ${payments.map(payment => `
+                        <div class="payment-card">
+                            <div class="payment-info">
+                                <h4>Payment #${payment.id.substring(0, 8)}</h4>
+                                <div class="payment-date">${new Date(payment.created_at).toLocaleDateString()}</div>
+                                <span class="badge ${payment.status === 'completed' ? 'badge-success' : 'badge-warning'}">${payment.status}</span>
+                            </div>
+                            <div class="payment-amount">$${payment.amount.toFixed(2)}</div>
+                        </div>
+                    `).join('')}
+                `;
+            } catch (err) {
+                console.error('Failed to load earnings:', err);
+                document.getElementById('paymentsList').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Failed to Load Data</h3>
+                        <p>Please check your connection and try again</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize
+        loadUserInfo();
+        loadAvailableLoads();
+    </script>
+</body>
+</html>

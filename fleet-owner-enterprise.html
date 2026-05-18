@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet Management - FleetFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="enterprise-design-system.css">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <a href="#" class="sidebar-brand">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect width="32" height="32" rx="8" fill="#FF7A00"/>
+                <path d="M8 16h16M16 8v16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            FleetFlow
+        </a>
+        
+        <nav>
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-item">
+                    <a href="#dashboard" class="sidebar-nav-link active" onclick="showPage('dashboard')">
+                        <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="#trucks" class="sidebar-nav-link" onclick="showPage('trucks')">
+                        <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="3" width="15" height="13" rx="2"/>
+                            <path d="M16 8h5l3 3v5h-2m-4 0H2"/>
+                            <circle cx="5.5" cy="18.5" r="2.5"/>
+                            <circle cx="18.5" cy="18.5" r="2.5"/>
+                        </svg>
+                        My Trucks
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="#drivers" class="sidebar-nav-link" onclick="showPage('drivers')">
+                        <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        Drivers
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="#jobs" class="sidebar-nav-link" onclick="showPage('jobs')">
+                        <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                        Available Jobs
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="#analytics" class="sidebar-nav-link" onclick="showPage('analytics')">
+                        <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v18h18"/>
+                            <path d="m19 9-5 5-4-4-3 3"/>
+                        </svg>
+                        Analytics
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Top Header -->
+    <header class="top-header">
+        <h1 class="header-title">Fleet Management</h1>
+        <div class="header-actions">
+            <button class="btn btn-ghost">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+            </button>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="text-secondary" id="userName">Fleet Owner</span>
+                <button class="btn btn-secondary" onclick="logout()">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page-content">
+            <div class="content-header">
+                <h2 class="content-title">Fleet Overview</h2>
+                <p class="content-subtitle">Real-time fleet operations and performance metrics</p>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-4 mb-xl">
+                <div class="kpi-card">
+                    <div class="kpi-value" id="totalTrucks">0</div>
+                    <div class="kpi-label">Total Trucks</div>
+                    <span class="badge badge-success mt-sm">Active</span>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-value" id="availableTrucks">0</div>
+                    <div class="kpi-label">Available</div>
+                    <span class="badge badge-info mt-sm">Ready</span>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-value" id="onTripTrucks">0</div>
+                    <div class="kpi-label">On Trip</div>
+                    <span class="badge badge-warning mt-sm">In Transit</span>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-value" id="maintenanceTrucks">0</div>
+                    <div class="kpi-label">Maintenance</div>
+                    <span class="badge badge-error mt-sm">Service</span>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card mb-xl">
+                <div class="card-header">
+                    <h3 class="h3">Quick Actions</h3>
+                </div>
+                <div class="card-body">
+                    <div class="flex gap-md">
+                        <button class="btn btn-primary" onclick="openAddTruckModal()">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                            Add New Truck
+                        </button>
+                        <button class="btn btn-secondary" onclick="openAddDriverModal()">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="8.5" cy="7" r="4"/>
+                                <path d="M20 8v6M23 11h-6"/>
+                            </svg>
+                            Add Driver
+                        </button>
+                        <button class="btn btn-ghost">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <path d="M7 10l5 5 5-5M12 15V3"/>
+                            </svg>
+                            Export Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Trucks -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="h3">Fleet Status</h3>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-container" style="border: none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Registration</th>
+                                    <th>Type</th>
+                                    <th>Capacity</th>
+                                    <th>Driver</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trucksTableBody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 40px;">
+                                        <span class="text-muted">Loading trucks...</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trucks Page -->
+        <div id="trucks-page" class="page-content" style="display: none;">
+            <div class="content-header flex justify-between items-center">
+                <div>
+                    <h2 class="content-title">My Trucks</h2>
+                    <p class="content-subtitle">Manage your fleet vehicles</p>
+                </div>
+                <button class="btn btn-primary" onclick="openAddTruckModal()">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Add Truck
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-container" style="border: none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Registration</th>
+                                    <th>Type</th>
+                                    <th>Capacity</th>
+                                    <th>Driver</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allTrucksTableBody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 40px;">
+                                        <span class="text-muted">Loading trucks...</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Drivers Page -->
+        <div id="drivers-page" class="page-content" style="display: none;">
+            <div class="content-header flex justify-between items-center">
+                <div>
+                    <h2 class="content-title">Drivers</h2>
+                    <p class="content-subtitle">Manage your driver roster</p>
+                </div>
+                <button class="btn btn-primary" onclick="openAddDriverModal()">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Add Driver
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-container" style="border: none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>License</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="driversTableBody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 40px;">
+                                        <span class="text-muted">Loading drivers...</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jobs Page -->
+        <div id="jobs-page" class="page-content" style="display: none;">
+            <div class="content-header">
+                <h2 class="content-title">Available Jobs</h2>
+                <p class="content-subtitle">Browse and bid on available loads</p>
+            </div>
+
+            <div class="card">
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-container" style="border: none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Load ID</th>
+                                    <th>Route</th>
+                                    <th>Weight</th>
+                                    <th>Price</th>
+                                    <th>Pickup Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jobsTableBody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 40px;">
+                                        <span class="text-muted">Loading available jobs...</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Truck Modal -->
+    <div id="addTruckModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div class="card" style="max-width: 500px; width: 90%; margin: 0;">
+            <div class="card-header">
+                <h3 class="h3">Add New Truck</h3>
+            </div>
+            <div class="card-body">
+                <form id="addTruckForm" onsubmit="handleAddTruck(event)">
+                    <div class="form-group">
+                        <label class="form-label">Registration Number</label>
+                        <input type="text" id="regNumber" class="form-input" placeholder="e.g., MH-01-AB-1234" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Truck Type</label>
+                        <input type="text" id="truckType" class="form-input" placeholder="e.g., Flatbed, Box Truck" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Capacity (tons)</label>
+                        <input type="number" id="capacity" class="form-input" placeholder="e.g., 10" step="0.1" required />
+                    </div>
+                    <div class="flex gap-md">
+                        <button type="submit" class="btn btn-primary">Add Truck</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeAddTruckModal()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:3001/api';
+        let token = localStorage.getItem('token');
+
+        if (!token) window.location.href = 'auth-enterprise.html';
+
+        function showPage(pageName) {
+            document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none');
+            document.querySelectorAll('.sidebar-nav-link').forEach(l => l.classList.remove('active'));
+            
+            const page = document.getElementById(pageName + '-page');
+            if (page) page.style.display = 'block';
+            
+            event.target.closest('.sidebar-nav-link').classList.add('active');
+            
+            if (pageName === 'dashboard') loadDashboard();
+            if (pageName === 'trucks') loadAllTrucks();
+            if (pageName === 'drivers') loadDrivers();
+            if (pageName === 'jobs') loadJobs();
+        }
+
+        async function loadUserInfo() {
+            try {
+                const res = await fetch(`${API_URL}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const user = await res.json();
+                document.getElementById('userName').textContent = user.name || user.email;
+            } catch (err) {
+                console.error('Failed to load user info:', err);
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const res = await fetch(`${API_URL}/trucks`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const trucks = await res.json();
+                
+                const available = trucks.filter(t => t.status === 'available').length;
+                const onTrip = trucks.filter(t => t.status === 'on_trip').length;
+                const maintenance = trucks.filter(t => t.status === 'maintenance').length;
+                
+                document.getElementById('totalTrucks').textContent = trucks.length;
+                document.getElementById('availableTrucks').textContent = available;
+                document.getElementById('onTripTrucks').textContent = onTrip;
+                document.getElementById('maintenanceTrucks').textContent = maintenance;
+                
+                renderTrucksTable(trucks.slice(0, 5), 'trucksTableBody');
+            } catch (err) {
+                console.error('Failed to load dashboard:', err);
+            }
+        }
+
+        async function loadAllTrucks() {
+            try {
+                const res = await fetch(`${API_URL}/trucks`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const trucks = await res.json();
+                renderTrucksTable(trucks, 'allTrucksTableBody');
+            } catch (err) {
+                console.error('Failed to load trucks:', err);
+            }
+        }
+
+        function renderTrucksTable(trucks, tbodyId) {
+            const tbody = document.getElementById(tbodyId);
+            if (trucks.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;"><span class="text-muted">No trucks found</span></td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = trucks.map(truck => {
+                let statusBadge = 'badge-neutral';
+                if (truck.status === 'available') statusBadge = 'badge-success';
+                if (truck.status === 'on_trip') statusBadge = 'badge-warning';
+                if (truck.status === 'maintenance') statusBadge = 'badge-error';
+                
+                return `
+                    <tr>
+                        <td><strong>${truck.registration_number}</strong></td>
+                        <td>${truck.type || 'N/A'}</td>
+                        <td>${truck.capacity_tons} tons</td>
+                        <td>${truck.assigned_driver_id ? 'Assigned' : '<span class="text-muted">Unassigned</span>'}</td>
+                        <td><span class="badge ${statusBadge}">${truck.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-ghost">Assign Driver</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function loadDrivers() {
+            try {
+                const res = await fetch(`${API_URL}/admin/users?role=driver`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const drivers = await res.json();
+                
+                const tbody = document.getElementById('driversTableBody');
+                if (drivers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;"><span class="text-muted">No drivers found</span></td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = drivers.map(driver => `
+                    <tr>
+                        <td><strong>${driver.name || 'N/A'}</strong></td>
+                        <td>${driver.email}</td>
+                        <td>${driver.license_number || 'N/A'}</td>
+                        <td>${driver.phone || 'N/A'}</td>
+                        <td><span class="badge ${driver.is_verified ? 'badge-success' : 'badge-warning'}">${driver.is_verified ? 'Active' : 'Pending'}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-ghost">View Details</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load drivers:', err);
+            }
+        }
+
+        async function loadJobs() {
+            try {
+                const res = await fetch(`${API_URL}/loads?status=open`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const jobs = await res.json();
+                
+                const tbody = document.getElementById('jobsTableBody');
+                if (jobs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;"><span class="text-muted">No available jobs</span></td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = jobs.map(job => `
+                    <tr>
+                        <td><strong>#${job.id.substring(0, 8)}</strong></td>
+                        <td>${job.pickup_location} → ${job.delivery_location}</td>
+                        <td>${job.weight_tons} tons</td>
+                        <td>${job.price_fixed ? '$' + job.price_fixed : '<span class="text-muted">Negotiable</span>'}</td>
+                        <td>${job.pickup_window_start ? new Date(job.pickup_window_start).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary">Place Bid</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load jobs:', err);
+            }
+        }
+
+        function openAddTruckModal() {
+            document.getElementById('addTruckModal').style.display = 'flex';
+        }
+
+        function closeAddTruckModal() {
+            document.getElementById('addTruckModal').style.display = 'none';
+            document.getElementById('addTruckForm').reset();
+        }
+
+        async function handleAddTruck(event) {
+            event.preventDefault();
+            
+            const truckData = {
+                registration_number: document.getElementById('regNumber').value.trim(),
+                type: document.getElementById('truckType').value.trim(),
+                capacity_tons: parseFloat(document.getElementById('capacity').value),
+                status: 'available'
+            };
+            
+            try {
+                const res = await fetch(`${API_URL}/trucks`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(truckData)
+                });
+                
+                if (res.ok) {
+                    alert('Truck added successfully!');
+                    closeAddTruckModal();
+                    loadDashboard();
+                } else {
+                    const error = await res.json();
+                    alert('Failed to add truck: ' + (error.error || 'Unknown error'));
+                }
+            } catch (err) {
+                console.error('Failed to add truck:', err);
+                alert('Error adding truck');
+            }
+        }
+
+        function openAddDriverModal() {
+            alert('Add Driver modal - to be implemented');
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'auth-enterprise.html';
+        }
+
+        // Initialize
+        loadUserInfo();
+        loadDashboard();
+    </script>
+</body>
+</html>

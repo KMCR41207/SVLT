@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow - Enterprise Freight & Logistics Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="enterprise-design-system.css">
+    <style>
+        /* Landing Page Specific Styles */
+        body {
+            background: var(--navy-primary);
+        }
+
+        .landing-hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-2xl) var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .landing-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(11, 31, 58, 0.95) 0%, rgba(45, 55, 72, 0.9) 100%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 122, 0, 0.1);
+            border: 1px solid rgba(255, 122, 0, 0.3);
+            border-radius: 50px;
+            color: var(--orange-primary);
+            font-size: var(--font-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-xl);
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--text-inverse);
+            line-height: 1.1;
+            margin-bottom: var(--space-lg);
+            letter-spacing: -0.02em;
+        }
+
+        .hero-subtitle {
+            font-size: var(--font-xl);
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin: 0 auto var(--space-2xl);
+            line-height: 1.6;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-actions .btn {
+            padding: 16px 32px;
+            font-size: var(--font-base);
+        }
+
+        .btn-secondary-inverse {
+            background: transparent;
+            color: var(--text-inverse);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary-inverse:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-xl);
+            margin-top: var(--space-2xl);
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: var(--space-lg);
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(255, 122, 0, 0.1);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+            font-size: 32px;
+        }
+
+        .feature-title {
+            font-size: var(--font-lg);
+            font-weight: 600;
+            color: var(--text-inverse);
+            margin-bottom: var(--space-sm);
+        }
+
+        .feature-desc {
+            font-size: var(--font-sm);
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .hero-subtitle {
+                font-size: var(--font-base);
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-lg);
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .hero-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="landing-hero">
+        <div class="hero-content">
+            <div class="hero-badge">Enterprise Logistics Platform</div>
+            
+            <h1 class="hero-title">
+                Professional Freight<br>Management System
+            </h1>
+            
+            <p class="hero-subtitle">
+                Complete B2B logistics platform for fleet owners, shippers, and drivers. 
+                Streamline operations, track shipments, and manage your entire freight network.
+            </p>
+            
+            <div class="hero-actions">
+                <a href="auth.html" class="btn btn-primary">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
+                    </svg>
+                    Sign In to Dashboard
+                </a>
+                <a href="register.html" class="btn btn-secondary-inverse">
+                    Request Demo
+                </a>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🚛</div>
+                    <h3 class="feature-title">Fleet Management</h3>
+                    <p class="feature-desc">Real-time tracking and management of your entire fleet operations</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📦</div>
+                    <h3 class="feature-title">Load Tracking</h3>
+                    <p class="feature-desc">End-to-end shipment visibility with live status updates</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Analytics</h3>
+                    <p class="feature-desc">Comprehensive reporting and operational insights</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,103 @@
+/* ── StarBorder – Vanilla CSS port of @react-bits/StarBorder ── */
+
+/* ─── Outer wrapper ─── */
+.star-border-container {
+    display: inline-block;
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    padding: 1.5px 0;
+    /* thickness of the glow border */
+    text-decoration: none;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+}
+
+/* ─── Bottom sweeping orb ─── */
+.star-border-container .sb-bottom {
+    display: block;
+    position: absolute;
+    width: 300%;
+    height: 50%;
+    bottom: -11px;
+    right: -250%;
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.85;
+    background: radial-gradient(circle,
+            var(--sb-color, #00cfff) 0%,
+            rgba(255, 255, 255, 0.6) 20%,
+            transparent 55%);
+    animation: sb-bottom var(--sb-speed, 5s) linear infinite alternate;
+}
+
+/* ─── Top sweeping orb ─── */
+.star-border-container .sb-top {
+    display: block;
+    position: absolute;
+    width: 300%;
+    height: 50%;
+    top: -11px;
+    left: -250%;
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.85;
+    background: radial-gradient(circle,
+            var(--sb-color, #00cfff) 0%,
+            rgba(255, 255, 255, 0.6) 20%,
+            transparent 55%);
+    animation: sb-top var(--sb-speed, 5s) linear infinite alternate;
+}
+
+/* ─── Inner content ─── */
+.star-border-container .sb-inner {
+    display: block;
+    position: relative;
+    border: 1.5px solid rgba(255, 255, 255, 0.30);
+    background: rgba(10, 10, 30, 0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 14px 36px;
+    border-radius: 20px;
+    z-index: 1;
+    letter-spacing: 0.04em;
+    transition: background 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+}
+
+.star-border-container:hover .sb-inner {
+    background: rgba(10, 10, 40, 0.88);
+    transform: translateY(-2px);
+}
+
+/* ─── Keyframes ─── */
+@keyframes sb-bottom {
+    0% {
+        transform: translate(0%, 0%);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-100%, 0%);
+        opacity: 0;
+    }
+}
+
+@keyframes sb-top {
+    0% {
+        transform: translate(0%, 0%);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(100%, 0%);
+        opacity: 0;
+    }
+}
