@@ -35,9 +35,9 @@ app.use('/api/disputes', disputesRoutes);
 // Serve static files from parent directory (frontend files)
 app.use(express.static(path.join(__dirname, '..')));
 
-// Serve landing.html for root path
+// Serve landing-enterprise.html for root path
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'landing.html'));
+  res.sendFile(path.join(__dirname, '..', 'landing-enterprise.html'));
 });
 
 // Error handler
