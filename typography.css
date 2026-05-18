@@ -1,0 +1,152 @@
+/* ============================================================
+   FLEETFLOW — ZEBRA.COM CORPORATE TYPOGRAPHY SYSTEM
+   Matches enterprise logistics visual language
+   ============================================================ */
+
+/* Google Fonts loaded via HTML <link> in each page:
+   Roboto Condensed 700/800 + Oswald 500/700
+   <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700;800&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+*/
+
+/* ── Base body text ── */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Main Headings (H1–H3) — Roboto Condensed bold ── */
+h1, .h1,
+h2, .h2,
+h3, .h3 {
+    font-family: 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+}
+
+h1, .h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+}
+
+h2, .h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    font-weight: 700;
+}
+
+h3, .h3 {
+    font-size: clamp(1.15rem, 2.5vw, 1.6rem);
+    font-weight: 700;
+}
+
+h4, .h4 {
+    font-family: 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+}
+
+/* ── Paragraph / body text ── */
+p, li, td, th, label, input, textarea, select, button {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+/* ── Statistic / KPI numbers — Oswald ultra-bold ── */
+.kpi-value,
+.stat-num,
+.earnings-amount,
+.kpi-val,
+[class*="kpi-val"],
+[class*="stat-num"] {
+    font-family: 'Oswald', 'DIN Condensed', 'Bebas Neue', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1;
+    letter-spacing: -2px;
+}
+
+/* ── Navigation / UI labels ── */
+.sidebar-brand,
+.nav-brand,
+.header-title,
+.content-title,
+.section-title {
+    font-family: 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* ── Buttons ── */
+.btn,
+button {
+    font-family: 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+/* ── Table headers ── */
+.table th,
+th {
+    font-family: 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* ── Badges ── */
+.badge {
+    font-family: 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* ── Form labels ── */
+.form-label,
+label {
+    font-family: 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+/* ── Sidebar nav links ── */
+.sidebar-nav-link {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 500;
+}
+
+/* ── Content subtitles / helper text ── */
+.content-subtitle,
+.kpi-label,
+.text-secondary,
+.text-muted,
+.form-helper {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+/* ── Hero / landing large text ── */
+.hero-title,
+.page-hero h1,
+.welcome-text,
+.company-name,
+.tagline {
+    font-family: 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+}
+
+/* ── Section labels (uppercase small caps) ── */
+.section-label {
+    font-family: 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+}
