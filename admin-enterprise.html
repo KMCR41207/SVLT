@@ -227,6 +227,47 @@
             </div>
         </div>
 
+        <!-- Fleet Page -->
+        <div id="fleet-page" class="page-content" style="display: none;">
+            <div class="content-header">
+                <h2 class="content-title">Fleet Management</h2>
+                <p class="content-subtitle">All registered trucks on the platform</p>
+            </div>
+            <div class="card">
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-container" style="border: none;">
+                        <table class="table">
+                            <thead><tr><th>Truck ID</th><th>Owner</th><th>Type</th><th>Capacity</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody id="trucksTableBody"><tr><td colspan="6" style="text-align:center;padding:40px;"><span class="text-muted">Loading trucks...</span></td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Page -->
+        <div id="analytics-page" class="page-content" style="display: none;">
+            <div class="content-header">
+                <h2 class="content-title">Analytics & Reports</h2>
+                <p class="content-subtitle">Platform performance overview</p>
+            </div>
+            <div class="grid grid-cols-4 mb-xl">
+                <div class="kpi-card"><div class="kpi-value" id="analyticsUsers">0</div><div class="kpi-label">Total Users</div></div>
+                <div class="kpi-card"><div class="kpi-value" id="analyticsTrucks">0</div><div class="kpi-label">Total Trucks</div></div>
+                <div class="kpi-card"><div class="kpi-value" id="analyticsLoads">0</div><div class="kpi-label">Total Loads</div></div>
+                <div class="kpi-card"><div class="kpi-value" id="analyticsRevenue">$0</div><div class="kpi-label">Total Revenue</div></div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings-page" class="page-content" style="display: none;">
+            <div class="content-header">
+                <h2 class="content-title">Settings</h2>
+                <p class="content-subtitle">Platform configuration</p>
+            </div>
+            <div class="card"><div class="card-body"><p style="color:var(--text-secondary);">Settings panel coming soon.</p></div></div>
+        </div>
+
         <!-- Loads Page -->
         <div id="loads-page" class="page-content" style="display: none;">
             <div class="content-header">
@@ -266,7 +307,7 @@
         const API_URL = 'http://127.0.0.1:3001/api';
         let token = localStorage.getItem('token');
 
-        if (!token) window.location.href = 'auth.html';
+        if (!token) window.location.href = 'auth-enterprise.html';
 
         function showPage(pageName) {
             // Hide all pages
@@ -286,6 +327,8 @@
             if (pageName === 'dashboard') loadDashboard();
             if (pageName === 'users') loadAllUsers();
             if (pageName === 'loads') loadLoads();
+            if (pageName === 'fleet') loadFleet();
+            if (pageName === 'analytics') loadAnalytics();
         }
 
         async function loadDashboard() {
@@ -405,13 +448,34 @@
             }
         }
 
+        async function loadFleet() {
+            try {
+                const res = await fetch(`${API_URL}/admin/trucks`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const trucks = await res.json();
+                const tbody = document.getElementById('trucksTableBody');
+                if (!trucks.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;"><span class="text-muted">No trucks found</span></td></tr>'; return; }
+                tbody.innerHTML = trucks.map(t => `<tr><td><strong>#${t.id.substring(0,8)}</strong></td><td>${t.owner_name||'N/A'}</td><td>${t.truck_type||'N/A'}</td><td>${t.capacity_tons||'N/A'}T</td><td><span class="badge badge-info">${t.status||'active'}</span></td><td><button class="btn btn-sm btn-ghost">View</button></td></tr>`).join('');
+            } catch(err) { console.error(err); }
+        }
+
+        async function loadAnalytics() {
+            try {
+                const res = await fetch(`${API_URL}/admin/reports`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                document.getElementById('analyticsUsers').textContent = data.total_users || 0;
+                document.getElementById('analyticsTrucks').textContent = data.total_trucks || 0;
+                document.getElementById('analyticsLoads').textContent = data.total_loads || 0;
+                document.getElementById('analyticsRevenue').textContent = '$' + (data.total_revenue || 0).toFixed(2);
+            } catch(err) { console.error(err); }
+        }
+
         function openCreateUserModal() {
             alert('Create User modal - to be implemented');
         }
 
         function logout() {
             localStorage.removeItem('token');
-            window.location.href = 'auth.html';
+            window.location.href = 'auth-enterprise.html';
         }
 
         // Initialize

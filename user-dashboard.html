@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FleetFlow – Request Services</title>
+    <title>FleetFlow â€“ Request Services</title>
     <meta name="description" content="Request trucking and logistics services through FleetFlow.">
     <link rel="stylesheet" href="animated-bg.css">
     <link
@@ -18,8 +18,8 @@
         }
 
         :root {
-            --purple: #667eea;
-            --violet: #764ba2;
+            --purple: #FF7A00;
+            --violet: #0B1F3A;
             --teal: #11998e;
             --orange: #f7971e;
             --dark: #1a1a2e;
@@ -33,7 +33,7 @@
             min-height: 100vh;
         }
 
-        /* ── Navbar ── */
+        /* â”€â”€ Navbar â”€â”€ */
         .navbar {
             position: sticky;
             top: 0;
@@ -51,7 +51,7 @@
             font-family: 'Playfair Display', serif;
             font-size: 1.3rem;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--purple), var(--violet));
+            background: #FF7A00;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -81,7 +81,7 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--purple), var(--violet));
+            background: #FF7A00;
             color: white;
             font-size: 0.75rem;
             font-weight: 800;
@@ -104,9 +104,9 @@
             color: #f5576c;
         }
 
-        /* ── Hero Banner ── */
+        /* â”€â”€ Hero Banner â”€â”€ */
         .hero-banner {
-            background: linear-gradient(135deg, var(--purple) 0%, var(--violet) 100%);
+            background: linear-gradient(135deg, #FF7A00 0%, #0B1F3A 100%);
             color: white;
             padding: 3rem 2rem 2.5rem;
             text-align: center;
@@ -141,14 +141,14 @@
             line-height: 1.6;
         }
 
-        /* ── Main content ── */
+        /* â”€â”€ Main content â”€â”€ */
         .main {
             max-width: 1100px;
             margin: 0 auto;
             padding: 2.5rem 2rem;
         }
 
-        /* ── Service cards grid ── */
+        /* â”€â”€ Service cards grid â”€â”€ */
         .services-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -171,11 +171,11 @@
         .service-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 16px 45px rgba(102, 126, 234, 0.18);
-            border-color: var(--purple);
+            border-color: #FF7A00;
         }
 
         .service-card.selected {
-            border-color: var(--purple);
+            border-color: #FF7A00;
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.04), rgba(118, 75, 162, 0.04));
             box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
         }
@@ -188,7 +188,7 @@
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--purple), var(--violet));
+            background: #FF7A00;
             color: white;
             font-size: 0.75rem;
             font-weight: 900;
@@ -217,7 +217,7 @@
             line-height: 1.6;
         }
 
-        /* ── Request Form ── */
+        /* â”€â”€ Request Form â”€â”€ */
         .request-section {
             background: white;
             border-radius: 20px;
@@ -285,7 +285,7 @@
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--purple);
+            border-color: #FF7A00;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
             background: white;
         }
@@ -293,7 +293,7 @@
         .btn-request {
             margin-top: 1.5rem;
             padding: 0.9rem 2.5rem;
-            background: linear-gradient(135deg, var(--purple), var(--violet));
+            background: #FF7A00;
             color: white;
             border: none;
             border-radius: 12px;
@@ -310,7 +310,7 @@
             box-shadow: 0 14px 36px rgba(102, 126, 234, 0.45);
         }
 
-        /* ── My Requests ── */
+        /* â”€â”€ My Requests â”€â”€ */
         .my-requests h2 {
             font-family: 'Playfair Display', serif;
             font-size: 1.3rem;
@@ -376,7 +376,7 @@
 
         .status-complete {
             background: rgba(102, 126, 234, 0.12);
-            color: var(--purple);
+            color: #FF7A00;
         }
 
         .empty-state {
@@ -431,7 +431,7 @@
 
 <body>
 
-    <!-- ═══ NAVBAR ═══ -->
+    <!-- â•â•â• NAVBAR â•â•â• -->
     <nav class="navbar">
         <a href="user-dashboard.html" class="nav-brand">
             <span class="img-placeholder"
@@ -447,14 +447,14 @@
         </div>
     </nav>
 
-    <!-- ═══ HERO ═══ -->
+    <!-- â•â•â• HERO â•â•â• -->
     <div class="hero-banner">
         <h1>Welcome, <span id="heroName">there</span>!</h1>
         <p>Choose a service below and fill in your details. We'll match you with the best available trucks for your
             needs.</p>
     </div>
 
-    <!-- ═══ MAIN ═══ -->
+    <!-- â•â•â• MAIN â•â•â• -->
     <div class="main">
 
         <!-- Service Type Selection -->
@@ -532,7 +532,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Budget (₹ approx.)</label>
+                    <label>Budget (â‚¹ approx.)</label>
                     <input type="number" id="budget" placeholder="e.g. 15000" min="0">
                 </div>
                 <div class="form-group full">
@@ -563,7 +563,7 @@
         const API_URL = 'http://127.0.0.1:3001/api';
         let selectedService = null;
 
-        // ── Load user info
+        // â”€â”€ Load user info
         function loadUser() {
             const name = localStorage.getItem('userName') || 'User';
             const first = name.split(' ')[0];
@@ -573,7 +573,7 @@
             document.getElementById('avatarInitial').textContent = init;
         }
 
-        // ── Select service
+        // â”€â”€ Select service
         function selectService(type, el) {
             selectedService = type;
             document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
@@ -587,7 +587,7 @@
             document.getElementById('selectedServiceLabel').textContent = labels[type] || type;
         }
 
-        // ── Submit Request
+        // â”€â”€ Submit Request
         async function submitRequest() {
             if (!selectedService) {
                 alert('Please select a service type first.');
@@ -668,7 +668,7 @@
             renderRequests();
         }
 
-        // ── Render saved requests
+        // â”€â”€ Render saved requests
         function renderRequests() {
             const list = document.getElementById('requestList');
             const requests = JSON.parse(localStorage.getItem('userRequests') || '[]');
@@ -693,7 +693,7 @@
             `).join('');
         }
 
-        // ── Logout
+        // â”€â”€ Logout
         function logout() {
             if (!confirm('Are you sure you want to sign out?')) return;
             localStorage.removeItem('token');
@@ -704,15 +704,15 @@
             window.location.href = 'landing.html';
         }
 
-        // ── Set min date to today
+        // â”€â”€ Set min date to today
         document.getElementById('pickupDate').min = new Date().toISOString().split('T')[0];
 
-        // ── Guard: must be logged in
+        // â”€â”€ Guard: must be logged in
         if (!localStorage.getItem('token')) {
             window.location.href = 'auth.html';
         }
 
-        // ── Init
+        // â”€â”€ Init
         loadUser();
         renderRequests();
     </script>
