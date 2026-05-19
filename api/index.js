@@ -1,4 +1,5 @@
 require('dotenv').config();
+process.removeAllListeners('warning'); // suppress deprecation warnings
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
