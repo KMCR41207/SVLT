@@ -703,7 +703,7 @@
             localStorage.removeItem('userRole');
             localStorage.removeItem('userName');
             localStorage.removeItem('userEmail');
-            window.location.href = 'landing.html';
+            window.location.href = 'landing-enterprise.html';
         }
 
         // â”€â”€ Set min date to today
@@ -711,7 +711,7 @@
 
         // â”€â”€ Guard: must be logged in
         if (!localStorage.getItem('token')) {
-            window.location.href = 'auth.html';
+            window.location.href = 'auth-enterprise.html';
         }
 
         // â”€â”€ Init
@@ -721,4 +721,5 @@
 </body>
 
 </html>
+
 
