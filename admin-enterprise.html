@@ -105,6 +105,20 @@
         </div>
     </header>
 
+    <!-- ── DETAIL MODAL ── -->
+    <div id="detailModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+        <div style="background:#fff;border-radius:12px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem;border-bottom:1px solid #E5E7EB;">
+                <h3 id="modalTitle" style="font-family:'Roboto Condensed',Arial,sans-serif;font-weight:700;font-size:1.25rem;color:#0B1F3A;margin:0;"></h3>
+                <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:1.5rem;color:#6B7280;line-height:1;padding:0 4px;">&times;</button>
+            </div>
+            <div id="modalBody" style="padding:1.5rem;"></div>
+            <div style="padding:1rem 1.5rem;border-top:1px solid #E5E7EB;display:flex;justify-content:flex-end;">
+                <button onclick="closeModal()" style="padding:8px 20px;background:#FF7A00;color:#fff;border:none;border-radius:8px;font-family:'Roboto Condensed',Arial,sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <main class="main-content">
         <!-- Dashboard Page -->
@@ -373,7 +387,7 @@
                         <td><span class="badge ${user.is_verified ? 'badge-success' : 'badge-warning'}">${user.is_verified ? 'Active' : 'Pending'}</span></td>
                         <td>${new Date(user.created_at).toLocaleDateString()}</td>
                         <td>
-                            <button class="btn btn-sm btn-ghost">View</button>
+                            <button class="btn btn-sm btn-ghost" onclick="viewUser(${JSON.stringify(user).replace(/"/g,'&quot;')})">View</button>
                         </td>
                     </tr>
                 `).join('');
@@ -403,7 +417,7 @@
                         <td><span class="badge ${user.is_verified ? 'badge-success' : 'badge-warning'}">${user.is_verified ? 'Active' : 'Pending'}</span></td>
                         <td>${new Date(user.created_at).toLocaleDateString()}</td>
                         <td>
-                            <button class="btn btn-sm btn-ghost">Edit</button>
+                            <button class="btn btn-sm btn-ghost" onclick="viewUser(${JSON.stringify(user).replace(/"/g,'&quot;')})">View</button>
                             <button class="btn btn-sm btn-ghost">Suspend</button>
                         </td>
                     </tr>
@@ -440,7 +454,7 @@
                             <td>${load.weight_tons} tons</td>
                             <td><span class="badge ${statusBadge}">${load.status}</span></td>
                             <td>
-                                <button class="btn btn-sm btn-ghost">View</button>
+                                <button class="btn btn-sm btn-ghost" onclick="viewLoad(${JSON.stringify(load).replace(/"/g,'&quot;')})">View</button>
                             </td>
                         </tr>
                     `;
@@ -456,7 +470,7 @@
                 const trucks = await res.json();
                 const tbody = document.getElementById('trucksTableBody');
                 if (!trucks.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;"><span class="text-muted">No trucks found</span></td></tr>'; return; }
-                tbody.innerHTML = trucks.map(t => `<tr><td><strong>#${t.id.substring(0,8)}</strong></td><td>${t.owner_name||'N/A'}</td><td>${t.truck_type||'N/A'}</td><td>${t.capacity_tons||'N/A'}T</td><td><span class="badge badge-info">${t.status||'active'}</span></td><td><button class="btn btn-sm btn-ghost">View</button></td></tr>`).join('');
+                tbody.innerHTML = trucks.map(t => `<tr><td><strong>#${t.id.substring(0,8)}</strong></td><td>${t.owner_name||'N/A'}</td><td>${t.truck_type||'N/A'}</td><td>${t.capacity_tons||'N/A'}T</td><td><span class="badge badge-info">${t.status||'active'}</span></td><td><button class="btn btn-sm btn-ghost" onclick="viewTruck(${JSON.stringify(t).replace(/"/g,'&quot;')})">View</button></td></tr>`).join('');
             } catch(err) { console.error(err); }
         }
 
@@ -473,6 +487,109 @@
 
         function openCreateUserModal() {
             alert('Create User modal - to be implemented');
+        }
+
+        // ── MODAL HELPERS ──
+        function openModal(title, bodyHTML) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = bodyHTML;
+            const modal = document.getElementById('detailModal');
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        // Close modal on backdrop click
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        function row(label, value) {
+            return `<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #F3F4F6;">
+                <span style="font-family:'Roboto Condensed',Arial,sans-serif;font-weight:700;font-size:0.8rem;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;min-width:140px;">${label}</span>
+                <span style="font-family:Arial,sans-serif;font-size:0.9rem;color:#111827;text-align:right;word-break:break-all;">${value || '—'}</span>
+            </div>`;
+        }
+
+        function viewLoad(load) {
+            const statusColors = { open:'#92400E', assigned:'#1E40AF', in_transit:'#1E40AF', delivered:'#166534', cancelled:'#991B1B' };
+            const statusBg = { open:'#FEF3C7', assigned:'#DBEAFE', in_transit:'#DBEAFE', delivered:'#DCFCE7', cancelled:'#FEE2E2' };
+            const s = load.status || 'open';
+            const badge = `<span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;background:${statusBg[s]||'#F3F4F6'};color:${statusColors[s]||'#374151'};">${s}</span>`;
+            const html = `
+                <div style="background:#F7F9FC;border-radius:8px;padding:1rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;">
+                    <div style="width:48px;height:48px;background:#0B1F3A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">📦</div>
+                    <div>
+                        <div style="font-family:'Roboto Condensed',Arial,sans-serif;font-weight:800;font-size:1.1rem;color:#0B1F3A;">${load.title || 'Load Details'}</div>
+                        <div style="font-size:0.85rem;color:#6B7280;">ID: ${load.id}</div>
+                    </div>
+                    <div style="margin-left:auto;">${badge}</div>
+                </div>
+                ${row('Pickup', load.pickup_location)}
+                ${row('Delivery', load.delivery_location)}
+                ${row('Weight', load.weight_tons + ' tons')}
+                ${row('Goods Type', load.goods_type)}
+                ${row('Price', load.price_fixed ? '$' + load.price_fixed : 'Open for bidding')}
+                ${row('Shipper ID', load.shipper_id ? '#' + load.shipper_id.substring(0,8) : null)}
+                ${row('Driver ID', load.driver_id ? '#' + load.driver_id.substring(0,8) : 'Not assigned')}
+                ${row('Created', load.created_at ? new Date(load.created_at).toLocaleString() : null)}
+                ${load.notes ? row('Notes', load.notes) : ''}
+            `;
+            openModal('Load Details', html);
+        }
+
+        function viewUser(user) {
+            const roleColors = { admin:'#1E40AF', driver:'#166534', fleet_owner:'#92400E', shipper:'#6B21A8' };
+            const roleBg = { admin:'#DBEAFE', driver:'#DCFCE7', fleet_owner:'#FEF3C7', shipper:'#F3E8FF' };
+            const r = user.role || 'user';
+            const roleBadge = `<span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;background:${roleBg[r]||'#F3F4F6'};color:${roleColors[r]||'#374151'};">${r.replace('_',' ')}</span>`;
+            const statusBadge = user.is_verified
+                ? `<span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:0.75rem;font-weight:700;text-transform:uppercase;background:#DCFCE7;color:#166534;">Active</span>`
+                : `<span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:0.75rem;font-weight:700;text-transform:uppercase;background:#FEF3C7;color:#92400E;">Pending</span>`;
+            const initials = (user.name || user.email || 'U').substring(0,2).toUpperCase();
+            const html = `
+                <div style="background:#F7F9FC;border-radius:8px;padding:1rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;">
+                    <div style="width:48px;height:48px;background:#0B1F3A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Roboto Condensed',Arial,sans-serif;font-weight:800;font-size:1.1rem;color:#fff;">${initials}</div>
+                    <div>
+                        <div style="font-family:'Roboto Condensed',Arial,sans-serif;font-weight:800;font-size:1.1rem;color:#0B1F3A;">${user.name || 'Unknown'}</div>
+                        <div style="font-size:0.85rem;color:#6B7280;">${user.email}</div>
+                    </div>
+                    <div style="margin-left:auto;display:flex;flex-direction:column;gap:4px;align-items:flex-end;">${roleBadge}${statusBadge}</div>
+                </div>
+                ${row('Full Name', user.name)}
+                ${row('Email', user.email)}
+                ${row('Phone', user.phone)}
+                ${row('Role', user.role)}
+                ${row('Status', user.is_verified ? 'Active / Verified' : 'Pending Verification')}
+                ${row('User ID', user.id)}
+                ${row('Joined', user.created_at ? new Date(user.created_at).toLocaleString() : null)}
+            `;
+            openModal('User Details', html);
+        }
+
+        function viewTruck(truck) {
+            const initials = (truck.truck_type || 'TR').substring(0,2).toUpperCase();
+            const html = `
+                <div style="background:#F7F9FC;border-radius:8px;padding:1rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;">
+                    <div style="width:48px;height:48px;background:#0B1F3A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🚛</div>
+                    <div>
+                        <div style="font-family:'Roboto Condensed',Arial,sans-serif;font-weight:800;font-size:1.1rem;color:#0B1F3A;">${truck.truck_type || 'Truck'}</div>
+                        <div style="font-size:0.85rem;color:#6B7280;">ID: #${truck.id.substring(0,8)}</div>
+                    </div>
+                    <div style="margin-left:auto;"><span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:0.75rem;font-weight:700;text-transform:uppercase;background:#DBEAFE;color:#1E40AF;">${truck.status||'active'}</span></div>
+                </div>
+                ${row('Truck ID', truck.id)}
+                ${row('Type', truck.truck_type)}
+                ${row('Capacity', truck.capacity_tons ? truck.capacity_tons + ' tons' : null)}
+                ${row('Registration', truck.registration_number)}
+                ${row('Owner ID', truck.owner_id ? '#' + truck.owner_id.substring(0,8) : null)}
+                ${row('Owner Name', truck.owner_name)}
+                ${row('Status', truck.status || 'active')}
+                ${row('Added', truck.created_at ? new Date(truck.created_at).toLocaleString() : null)}
+            `;
+            openModal('Truck Details', html);
         }
 
         function logout() {
