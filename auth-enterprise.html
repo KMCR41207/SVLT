@@ -322,14 +322,14 @@
                 
                 // Redirect based on role
                 const rolePages = {
-                    driver: 'driver.html',
-                    fleet_owner: 'fleet-owner.html',
-                    shipper: 'shipper.html',
+                    driver: 'driver-enterprise.html',
+                    fleet_owner: 'fleet-owner-enterprise.html',
+                    shipper: 'shipper-enterprise.html',
                     admin: 'admin-enterprise.html'
                 };
                 
                 setTimeout(() => {
-                    window.location.href = rolePages[data.user.role] || 'admin-enterprise.html';
+                    window.location.href = rolePages[data.user.role] || 'landing-enterprise.html';
                 }, 1000);
                 
             } catch (err) {
@@ -349,12 +349,12 @@
         if (localStorage.getItem('token')) {
             const role = localStorage.getItem('userRole');
             const rolePages = {
-                driver: 'driver.html',
-                fleet_owner: 'fleet-owner.html',
-                shipper: 'shipper.html',
+                driver: 'driver-enterprise.html',
+                fleet_owner: 'fleet-owner-enterprise.html',
+                shipper: 'shipper-enterprise.html',
                 admin: 'admin-enterprise.html'
             };
-            window.location.href = rolePages[role] || 'admin-enterprise.html';
+            window.location.href = rolePages[role] || 'landing-enterprise.html';
         }
     </script>
 </body>

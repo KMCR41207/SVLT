@@ -32,19 +32,17 @@ router.post('/register', async (req, res) => {
     }
   }
 
-  // Restrict role creation: unauthenticated users can only create shipper accounts
+  // Restrict role creation: unauthenticated users can create shipper, driver, or fleet_owner accounts
   const allowedRoles = ['driver', 'fleet_owner', 'shipper', 'admin'];
   if (!allowedRoles.includes(role)) {
     return res.status(400).json({ error: 'Invalid role' });
   }
-  if (!callerRole && role !== 'shipper') {
-    return res.status(403).json({ error: 'Only administrators can create non-shipper accounts' });
+  // Only restrict admin creation to authenticated admins
+  if (!callerRole && role === 'admin') {
+    return res.status(403).json({ error: 'Only administrators can create admin accounts' });
   }
-  if (callerRole && callerRole !== 'admin' && callerRole !== 'fleet_owner') {
-    return res.status(403).json({ error: `Insufficient permissions. Your role: ${callerRole}. Required: admin or fleet_owner` });
-  }
-  if (callerRole === 'fleet_owner' && role !== 'driver') {
-    return res.status(403).json({ error: 'Fleet owners can only create driver accounts' });
+  if (callerRole && callerRole !== 'admin' && callerRole !== 'fleet_owner' && role === 'admin') {
+    return res.status(403).json({ error: 'Insufficient permissions to create admin accounts' });
   }
 
   // Check if user exists
